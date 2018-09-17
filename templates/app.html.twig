@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <script>
+        window.InitialRoute = '{{ InitialRoute }}';
+        window.IsSystemAdmin = {{ IsSystemAdmin }};
+        window.AdminOrgs = [
+            {% for org in AdminOrgs %}
+            {
+                OrgId: {{ org.OrgId }},
+                OrgName: '{{ org.OrgName }}',
+                DefaultTZ: '{{ org.DefaultTZ }}'
+            },
+            {% endfor %}
+        ];
+        window.Carriers = [
+            {% for carrier in Carriers %}
+            {
+                CarrierId: {{ carrier.CarrierId }},
+                CarrierName: '{{ carrier.CarrierName | raw }}'
+            },
+            {% endfor %}
+        ];
+    </script>
+    <div id="react-container"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('/bundle.js') }}"></script>
+{% endblock %}

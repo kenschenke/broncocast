@@ -1,0 +1,35 @@
+security:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        auth_db_provider:
+            id: App\Repository\UsersRepository
+#            entity:
+#                class: App:Users
+#                property: username
+
+    encoders:
+        App\Entity\Users:
+            algorithm: bcrypt
+            cost: 12
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        default:
+            anonymous: ~
+            http_basic: ~
+            switch_user: true
+            provider: auth_db_provider
+            logout:
+                path: /logout
+                target: /
+            simple_form:
+                authenticator: App\Security\MigrationAuthenticator
+                login_path: /auth/login
+                check_path: /auth/login_check
+                default_target_path: /main
+            remember_me:
+                secret: '%env(APP_SECRET)%'
+                catch_exceptions: false

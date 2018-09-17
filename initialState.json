@@ -1,0 +1,26 @@
+{
+  "router": {
+    "route": "",
+    "name": ""
+  },
+  "profile_contacts": {
+    "carrierToEdit": 0,
+    "contacts": [],
+    "emailToEdit": "",
+    "editingContactId": 0,
+    "phoneToEdit": "",
+    "selectedContactId": 0,
+    "showDeleteDialog": false,
+    "showEmailDialog": false,
+    "showPhoneDialog": false
+  },
+  "profile_pwd": {
+    "currentPwdValid": true,
+    "validatingCurrentPwd": false
+  },
+  "profile_orgs": {
+    "adminOrgs": [],
+    "orgs": [],
+    "selectedOrgMemberId": 0
+  }
+}

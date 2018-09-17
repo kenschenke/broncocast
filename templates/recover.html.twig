@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <h1 class="display-4">BroncoCast</h1>
+                    <p class="lead">
+                        Welcome! BroncoCast is an email and text broadcast service. FIRST Robotics Team 1987, The Broncobots,
+                        needed an easy way to reach out to students, parents, and adult mentors with important information and
+                        announcements. Please click Learn more to read more about BroncoCast and how your organization can utilize it.
+                    </p>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        Recover Account
+                    </div>
+                    <div class="card-body">
+                        <div class="form">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input class="form-control"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Recover</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <h3>Don't have an account yet?</h3>
+                <a class="btn btn-primary btn-lg" href="{{ url('auth_register') }}" role="button">Register</a>
+                <h3 class="mt-3">Already have an account?</h3>
+                <a class="btn btn-primary btn-lg" href="{{ url('auth_login') }}" role="button">Login</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
