@@ -39,12 +39,17 @@ class ProfileOrgsUi extends React.Component {
                         <label>Enter tag to join an organization</label>
                         <div className="input-group">
                             <DuxInput name="tag"
-                                      className="form-control"
+                                      className={'form-control' + (this.props.orgMessage.length < 1 ? '' : ' is-invalid')}
+                                      maxLength={15}
+                                      onValidate={value => value.length < 1 ? 'Tag cannot be empty' : undefined}
                             />
                             <div className="input-group-append">
-                                <button className="btn btn-secondary" type="button">Join</button>
+                                <button className="btn btn-secondary" type="button" disabled={this.props.joinDisabled} onClick={this.props.addOrg}>Join</button>
                             </div>
                         </div>
+                        <small className="text-danger" style={{height:'.75em'}}>
+                            {this.props.orgMessage}
+                        </small>
                     </div>
                 </DuxForm>
             </div>
@@ -54,8 +59,11 @@ class ProfileOrgsUi extends React.Component {
 
 ProfileOrgsUi.propTypes = {
     orgs: PropTypes.array.isRequired,
+    orgMessage: PropTypes.string.isRequired,
     selectedOrgId: PropTypes.number.isRequired,
+    joinDisabled: PropTypes.bool.isRequired,
 
+    addOrg: PropTypes.func.isRequired,
     deleteOrgClicked: PropTypes.func.isRequired,
     init: PropTypes.func.isRequired,
     orgSelected: PropTypes.func.isRequired

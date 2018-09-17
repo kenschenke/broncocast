@@ -21,6 +21,7 @@
   "profile_orgs": {
     "adminOrgs": [],
     "orgs": [],
-    "selectedOrgMemberId": 0
+    "selectedOrgMemberId": 0,
+    "orgMessage": ""
   }
 }
