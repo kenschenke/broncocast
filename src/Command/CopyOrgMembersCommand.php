@@ -32,8 +32,8 @@ class CopyOrgMembersCommand extends Command
         $conn = $this->em->getConnection();
         $stmt = $conn->executeQuery(
             'INSERT INTO org_members(id, org_id, user_id, is_admin, is_approved, ' .
-            'is_blocked, alt_usr_name, created, updated) ' .
-            'SELECT OrgMId, OrgId, UsrId, IsAdmin, Approved, Blocked, AltUsrName, Created, Updated FROM ORGM ORDER BY ORGMId'
+            'is_hidden, alt_usr_name, created, updated) ' .
+            'SELECT OrgMId, OrgId, UsrId, IsAdmin, Approved, \'f\', AltUsrName, Created, Updated FROM ORGM ORDER BY ORGMId'
         );
         $rowCount = $stmt->rowCount();
         $output->writeln(" - $rowCount row" . ($rowCount===1?"":"s"));

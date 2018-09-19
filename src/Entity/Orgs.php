@@ -249,4 +249,12 @@ class Orgs
     {
         $this->users->removeElement($orgMember);
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMembers()
+    {
+        return $this->users;
+    }
 }

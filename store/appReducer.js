@@ -1,6 +1,7 @@
 import C from '../constants';
 import { combineReducers } from 'redux';
 import { DuxFormReducer } from 'duxform';
+import { DuxTableReducer } from 'duxtable';
 import objectAssign from 'object-assign';
 
 export const dataReducer = type => (state={}, action) => {
@@ -17,5 +18,8 @@ export default combineReducers({
     profile_contacts: dataReducer(C.SET_PROFILE_CONTACTS_DATA),
     profile_pwd: dataReducer(C.SET_PROFILE_PWD_DATA),
     profile_orgs: dataReducer(C.SET_PROFILE_ORGS_DATA),
-    forms: DuxFormReducer
+    admin_org: dataReducer(C.SET_ADMIN_ORG),
+    admin_users: dataReducer(C.SET_ADMIN_USERS_DATA),
+    forms: DuxFormReducer,
+    duxtable: DuxTableReducer
 });

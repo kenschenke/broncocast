@@ -39,11 +39,6 @@ class OrgMembers
     private $isApproved;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isBlocked;
-
-    /**
      * @ORM\Column(type="string", length=30, nullable=true)
      */
     private $altUsrName;
@@ -76,6 +71,11 @@ class OrgMembers
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isHidden;
 
     /**
      * Called when new record saved
@@ -190,18 +190,6 @@ class OrgMembers
         return $this;
     }
 
-    public function getIsBlocked(): ?bool
-    {
-        return $this->isBlocked;
-    }
-
-    public function setIsBlocked(bool $isBlocked): self
-    {
-        $this->isBlocked = $isBlocked;
-
-        return $this;
-    }
-
     public function getAltUsrName(): ?string
     {
         return $this->altUsrName;
@@ -246,6 +234,18 @@ class OrgMembers
     public function setUpdated(\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getIsHidden(): ?bool
+    {
+        return $this->isHidden;
+    }
+
+    public function setIsHidden(bool $isHidden): self
+    {
+        $this->isHidden = $isHidden;
 
         return $this;
     }

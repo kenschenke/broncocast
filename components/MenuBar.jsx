@@ -3,13 +3,37 @@ import PropTypes from 'prop-types';
 import { mapMenuBarProps, mapMenuBarDispatch } from './maps/MenuBar.map';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import faCheck from '@fortawesome/fontawesome-free-solid/faCheck';
 
 class MenuBarUi extends React.Component {
     constructor(props) {
         super(props);
     }
 
+    componentDidMount() {
+        this.props.init();
+    }
+
+    adminOrgClicked = (e, OrgId, OrgName) => {
+        e.preventDefault();
+        this.props.adminOrgClicked(OrgId, OrgName);
+    };
+
     render() {
+        const AdminOrgs = window.AdminOrgs.map(org => {
+            return (
+                <a className="dropdown-item" href="#" onClick={e => this.adminOrgClicked(e, org.OrgId, org.OrgName)}>
+                    <div style={{width:'1.5em', display:'inline-block'}}>
+                        { org.OrgId === this.props.adminOrg &&
+                        <FontAwesomeIcon icon={faCheck}/>
+                        }
+                    </div>
+                    {org.OrgName}
+                </a>
+            );
+        });
+
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#menubar" aria-controls="menubar" aria-expanded="false" aria-label="Toggle menu">
@@ -20,7 +44,16 @@ class MenuBarUi extends React.Component {
                         <Link className={'nav-link' + (this.props.route==='profile' ? ' active' : '')} to="/profile">Profile</Link>
                         <Link className={'nav-link' + (this.props.route==='broadcasts' ? ' active' : '')} to="/broadcasts">My Broadcasts</Link>
                         { window.AdminOrgs.length &&
-                        <Link className={'nav-link' + (this.props.route==='admin' ? ' active' : '')} to="/admin">Admin</Link>
+                            <div className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup={true} aria-expanded={false}>Admin</a>
+                                <div className="dropdown-menu">
+                                    <Link className="dropdown-item" to="/admin/users">Users</Link>
+                                    { window.AdminOrgs.length > 1 &&
+                                    <div className="dropdown-divider"></div>
+                                    }
+                                    {window.AdminOrgs.length > 1 && AdminOrgs}
+                                </div>
+                            </div>
                         }
                         { window.IsSystemAdmin &&
                         <Link className={'nav-link' + (this.props.route==='system' ? ' active' : '')} to="/system">System</Link>
@@ -37,7 +70,11 @@ class MenuBarUi extends React.Component {
 }
 
 MenuBarUi.propTypes = {
-    route: PropTypes.string.isRequired
+    route: PropTypes.string.isRequired,
+    adminOrg: PropTypes.number.isRequired,
+    init: PropTypes.func.isRequired,
+
+    adminOrgClicked: PropTypes.func.isRequired
 };
 
 const Container = connect(mapMenuBarProps, mapMenuBarDispatch)(MenuBarUi);

@@ -63,14 +63,14 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin/users", name="admin_users")
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenStorageInterface $tokenStorage
      * @param AppModel $appModel
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function adminAction(AuthorizationCheckerInterface $authorizationChecker,
-                                TokenStorageInterface $tokenStorage, AppModel $appModel)
+    public function adminUsersAction(AuthorizationCheckerInterface $authorizationChecker,
+                                     TokenStorageInterface $tokenStorage, AppModel $appModel)
     {
         if ($authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             $roles = $tokenStorage->getToken()->getUser()->getRoles();
@@ -78,7 +78,7 @@ class DefaultController extends Controller
                 return $this->redirectToRoute('mainpage');
             } else {
                 $params = $appModel->GetAppParams();
-                $params['InitialRoute'] = 'admin';
+                $params['InitialRoute'] = 'admin/users';
                 return $this->render('app.html.twig', $params);
             }
         } else {

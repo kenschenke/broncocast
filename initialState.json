@@ -23,5 +23,18 @@
     "orgs": [],
     "selectedOrgMemberId": 0,
     "orgMessage": ""
+  },
+  "admin_org": {
+    "orgId": 0,
+    "orgName": ""
+  },
+  "admin_users": {
+    "fetching": false,
+    "users": [],
+    "showHidden": false,
+    "showNameDialog": false,
+    "nameChangeMemberId": 0,
+    "showRemoveDialog": false,
+    "removeMemberId": 0
   }
 }

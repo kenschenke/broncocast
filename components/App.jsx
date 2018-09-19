@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import MenuBar from './MenuBar.jsx';
 import Profile from './Routes/Profile.jsx';
 import MyBroadcasts from './Routes/MyBroadcasts.jsx';
-import Admin from './Routes/Admin.jsx';
+import { AdminUsers } from './Admin/AdminUsers.jsx';
 import System from './Routes/System.jsx';
 import About from './Routes/About.jsx';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
@@ -35,7 +35,7 @@ class AppUi extends React.Component {
                                 <div className="col-lg-10 col-md-12 col-sm-12 offset-lg-1">
                                     <Route path="/profile" component={Profile}/>
                                     <Route path="/broadcasts" component={MyBroadcasts}/>
-                                    <Route path="/admin" component={Admin}/>
+                                    <Route path="/admin/users" component={AdminUsers}/>
                                     <Route path="/system" component={System}/>
                                     <Route path="/about" component={About}/>
                                 </div>
