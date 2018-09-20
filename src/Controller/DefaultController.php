@@ -87,6 +87,30 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/admin/groups", name="admin_groups")
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenStorageInterface $tokenStorage
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function adminGroupsAction(AuthorizationCheckerInterface $authorizationChecker,
+                                      TokenStorageInterface $tokenStorage, AppModel $appModel)
+    {
+        if ($authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $roles = $tokenStorage->getToken()->getUser()->getRoles();
+            if (!in_array('ROLE_ORG_ADMIN', $roles) && !in_array('ROLE_SYSTEM_ADMIN', $roles)) {
+                return $this->redirectToRoute('mainpage');
+            } else {
+                $params = $appModel->GetAppParams();
+                $params['InitialRoute'] = 'admin/groups';
+                return $this->render('app.html.twig', $params);
+            }
+        } else {
+            return $this->redirectToRoute('auth_login');
+        }
+    }
+
+    /**
      * @Route("/system", name="system")
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenStorageInterface $tokenStorage

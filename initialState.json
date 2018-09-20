@@ -36,5 +36,18 @@
     "nameChangeMemberId": 0,
     "showRemoveDialog": false,
     "removeMemberId": 0
+  },
+  "admin_groups": {
+    "fetching": false,
+    "groups": [],
+    "showNameDialog": false,
+    "showRemoveDialog": false,
+    "nameChangeGroupId": 0,
+    "removeGroupId": 0,
+    "fetchingMembers": false,
+    "fetchingNonMembers": false,
+    "members": [],
+    "nonMembers": [],
+    "showHiddenNonMembers": false
   }
 }

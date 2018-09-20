@@ -23,7 +23,7 @@ class MenuBarUi extends React.Component {
     render() {
         const AdminOrgs = window.AdminOrgs.map(org => {
             return (
-                <a className="dropdown-item" href="#" onClick={e => this.adminOrgClicked(e, org.OrgId, org.OrgName)}>
+                <a key={org.OrgId} className="dropdown-item" href="#" onClick={e => this.adminOrgClicked(e, org.OrgId, org.OrgName)}>
                     <div style={{width:'1.5em', display:'inline-block'}}>
                         { org.OrgId === this.props.adminOrg &&
                         <FontAwesomeIcon icon={faCheck}/>
@@ -48,6 +48,7 @@ class MenuBarUi extends React.Component {
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup={true} aria-expanded={false}>Admin</a>
                                 <div className="dropdown-menu">
                                     <Link className="dropdown-item" to="/admin/users">Users</Link>
+                                    <Link className="dropdown-item" to="/admin/groups">Groups</Link>
                                     { window.AdminOrgs.length > 1 &&
                                     <div className="dropdown-divider"></div>
                                     }
