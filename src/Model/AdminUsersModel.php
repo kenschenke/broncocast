@@ -105,6 +105,9 @@ class AdminUsersModel
                     if (is_null($group)) {
                         throw new \Exception('Group record not found');
                     }
+                    if ($group->getOrgId() !== (int)$OrgId) {
+                        continue;
+                    }
                     $Groups[] = $group->getGrpName();
                 }
                 $GroupNames = implode(', ', $Groups);
