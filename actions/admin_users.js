@@ -8,7 +8,7 @@ export const adminOrgChanged = () => (dispatch, getState) => {
         type: C.SET_ROUTER_DATA,
         payload: {
             route: 'admin_users',
-            name: `${state.admin_org.orgName} Admin`
+            name: `${state.admin_org.orgName} Users Admin`
         }
     });
     dispatch(getUsers(state.admin_org.orgId));
