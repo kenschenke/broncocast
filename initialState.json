@@ -24,6 +24,10 @@
     "selectedOrgMemberId": 0,
     "orgMessage": ""
   },
+  "mybroadcasts": {
+    "fetching": false,
+    "broadcasts": []
+  },
   "admin_org": {
     "orgId": 0,
     "orgName": ""

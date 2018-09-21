@@ -1,8 +1,10 @@
 import C from "../../../constants";
+import { getBroadcasts } from '../../../actions/mybroadcasts';
 
 export const mapMyBroadcastsProps = state => {
     return {
-
+        fetching: state.mybroadcasts.fetching,
+        broadcasts: state.mybroadcasts.broadcasts
     };
 };
 
@@ -16,6 +18,8 @@ export const mapMyBroadcastsDispatch = dispatch => {
                     name: 'My Broadcasts'
                 }
             });
+
+            dispatch(getBroadcasts());
         }
     };
 };

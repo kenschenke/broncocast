@@ -248,6 +248,14 @@ class Broadcasts
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    /**
      * @param Recipients $recipient
      * @return $this
      */
@@ -264,5 +272,13 @@ class Broadcasts
     public function removeRecipient(Recipients $recipient)
     {
         $this->recipients->removeElement($recipient);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRecipients()
+    {
+        return $this->recipients;
     }
 }
