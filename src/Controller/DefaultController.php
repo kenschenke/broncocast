@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Model\AppModel;
+use App\Model\MyBroadcastsModel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -111,14 +112,14 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/system", name="system")
+     * @Route("/system/orgs", name="system_orgs")
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenStorageInterface $tokenStorage
      * @param AppModel $appModel
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function systemAction(AuthorizationCheckerInterface $authorizationChecker,
-                                 TokenStorageInterface $tokenStorage, AppModel $appModel)
+    public function systemOrgsAction(AuthorizationCheckerInterface $authorizationChecker,
+                                     TokenStorageInterface $tokenStorage, AppModel $appModel)
     {
         if ($authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             $roles = $tokenStorage->getToken()->getUser()->getRoles();
@@ -126,7 +127,7 @@ class DefaultController extends Controller
                 return $this->redirectToRoute('mainpage');
             } else {
                 $params = $appModel->GetAppParams();
-                $params['InitialRoute'] = 'system';
+                $params['InitialRoute'] = 'system/orgs';
                 return $this->render('app.html.twig', $params);
             }
         } else {

@@ -53,5 +53,17 @@
     "members": [],
     "nonMembers": [],
     "showHiddenNonMembers": false
+  },
+  "system_orgs": {
+    "orgs": [],
+    "timezones": [],
+    "fetching": false,
+    "selectedOrgId": 0,
+    "editingOrgId": 0,
+    "editingOrgName": "",
+    "editingDefaultTZ": "",
+    "editingTag": "",
+    "showEditDialog": false,
+    "showDeleteDialog": false
   }
 }

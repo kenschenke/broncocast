@@ -57,7 +57,12 @@ class MenuBarUi extends React.Component {
                             </div>
                         }
                         { window.IsSystemAdmin &&
-                        <Link className={'nav-link' + (this.props.route==='system' ? ' active' : '')} to="/system">System</Link>
+                        <div className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup={true} aria-expanded={false}>System</a>
+                            <div className="dropdown-menu">
+                                <Link className="dropdown-item" to="/system/orgs">Organizations</Link>
+                            </div>
+                        </div>
                         }
                         <Link className={'nav-link' + (this.props.route==='about' ? ' active' : '')} to="/about">About</Link>
                         <li className="nav-item">
