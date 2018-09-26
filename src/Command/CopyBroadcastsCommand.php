@@ -31,9 +31,9 @@ class CopyBroadcastsCommand extends Command
 
         $conn = $this->em->getConnection();
         $stmt = $conn->executeQuery(
-            'INSERT INTO broadcasts(id, org_id, usr_name, scheduled, ' .
+            'INSERT INTO broadcasts(id, org_id, usr_name, scheduled, is_sent, ' .
             'short_msg, long_msg, created, updated) ' .
-            'SELECT BrcId, OrgId, UsrName, Scheduled, ShortMsg, LongMsg, Created, Updated FROM BRC ORDER BY BrcId'
+            'SELECT BrcId, OrgId, UsrName, Scheduled, TRUE, ShortMsg, LongMsg, Created, Updated FROM BRC ORDER BY BrcId'
         );
         $rowCount = $stmt->rowCount();
         $output->writeln(" - $rowCount row" . ($rowCount===1?"":"s"));
