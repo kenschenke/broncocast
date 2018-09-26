@@ -21,7 +21,7 @@ class SendBroadcast
     {
         $Attachments = $Broadcast->getAttachments();
 
-        $PhoneRecips = [];  // array of array of phone numbers and carriers
+        $PhoneRecips = [];  // array of array of phone numbers and contact IDs
         $TextContent = '';  // content of SMS message
         $EmailRecips = []; // array of email addresses
         $EmailContent = '';  // content of email message body
@@ -95,7 +95,10 @@ class SendBroadcast
 
     public function SendBroadcasts()
     {
+        // Get the current date/time in UTC since scheduled dates for
+        // broadcasts are stored in UTC
         $Now = new \DateTime();
+        $Now->setTimezone(new \DateTimeZone('UTC'));
         $Broadcasts = $this->em->getRepository('App:Broadcasts')->findBy(['isSent' => false]);
         foreach ($Broadcasts as $Broadcast) {
             $Scheduled = $Broadcast->getScheduled();
