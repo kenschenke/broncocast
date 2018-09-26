@@ -31,8 +31,8 @@ class CopyContactsCommand extends Command
 
         $conn = $this->em->getConnection();
         $stmt = $conn->executeQuery(
-            'INSERT INTO contacts(id, user_id, contact, carrier_id, created, updated) ' .
-            'SELECT UsrCId, UsrId, Contact, CarId, Created, Updated FROM USRC ORDER BY UsrCId'
+            'INSERT INTO contacts(id, user_id, contact, created, updated) ' .
+            'SELECT UsrCId, UsrId, Contact, Created, Updated FROM USRC ORDER BY UsrCId'
         );
         $rowCount = $stmt->rowCount();
         $output->writeln(" - $rowCount row" . ($rowCount===1?"":"s"));

@@ -31,13 +31,12 @@ export const editContact = () => (dispatch, getState) => {
         return;
     }
 
-    if (selected[0].CarId) {
+    if (selected[0].Contact.search(/[^0-9]/) !== -1) {
         dispatch({
             type: C.SET_PROFILE_CONTACTS_DATA,
             payload: {
-                showPhoneDialog: true,
-                phoneToEdit: selected[0].Contact,
-                carrierToEdit: selected[0].CarId,
+                showEmailDialog: true,
+                emailToEdit: selected[0].Contact,
                 editingContactId: state.profile_contacts.selectedContactId
             }
         });
@@ -45,8 +44,8 @@ export const editContact = () => (dispatch, getState) => {
         dispatch({
             type: C.SET_PROFILE_CONTACTS_DATA,
             payload: {
-                showEmailDialog: true,
-                emailToEdit: selected[0].Contact,
+                showPhoneDialog: true,
+                phoneToEdit: selected[0].Contact,
                 editingContactId: state.profile_contacts.selectedContactId
             }
         });
@@ -125,8 +124,7 @@ export const saveEmail = () => (dispatch, getState) => {
                             ...state.profile_contacts.contacts,
                             {
                                 ContactId: data.ContactId,
-                                Contact: email,
-                                CarId: null
+                                Contact: email
                             }
                         ]
                     }
@@ -139,17 +137,13 @@ export const saveEmail = () => (dispatch, getState) => {
 export const savePhone = () => (dispatch, getState) => {
     const state = getState();
     const phone = getFormFieldValue(state, 'editphone', 'phone', '');
-    const carrier = parseInt(getFormFieldValue(state, 'editphone', 'carrier', 0));
-    const names = window.Carriers.filter(carr => carr.CarrierId === carrier);
-    const carname = names.length === 1 ? names[0].CarrierName : 'Unknown';
 
     if (state.profile_contacts.editingContactId) {
         $.ajax(`/api/contacts/${state.profile_contacts.editingContactId}`, {
             contentType: 'application/x-www-form-urlencoded',
             method: 'PUT',
             data: {
-                Key: phone,
-                CarId: carrier
+                Key: phone
             },
             success: data => {
                 if (!data.Success) {
@@ -168,9 +162,7 @@ export const savePhone = () => (dispatch, getState) => {
 
                             return {
                                 ...contact,
-                                Contact: phone,
-                                CarId: carrier,
-                                CarName: carname
+                                Contact: phone
                             };
                         })
                     }
@@ -182,8 +174,7 @@ export const savePhone = () => (dispatch, getState) => {
             contentType: 'application/x-www-form-urlencoded',
             method: 'POST',
             data: {
-                Key: phone,
-                CarId: carrier
+                Key: phone
             },
             success: data => {
                 if (!data.Success) {
@@ -199,9 +190,7 @@ export const savePhone = () => (dispatch, getState) => {
                             ...state.profile_contacts.contacts,
                             {
                                 ContactId: data.ContactId,
-                                Contact: phone,
-                                CarId: carrier,
-                                CarName: carname
+                                Contact: phone
                             }
                         ]
                     }

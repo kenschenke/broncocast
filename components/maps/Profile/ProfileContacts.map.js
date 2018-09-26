@@ -3,7 +3,6 @@ import C from '../../../constants';
 
 export const mapProfileContactsProps = state => {
     return {
-        CarrierToEdit: state.profile_contacts.carrierToEdit,
         Contacts: state.profile_contacts.contacts,
         EmailToEdit: state.profile_contacts.emailToEdit,
         PhoneToEdit: state.profile_contacts.phoneToEdit,
@@ -96,7 +95,6 @@ export const mapProfileContactsDispatch = dispatch => {
                 payload: {
                     showPhoneDialog: true,
                     phoneToEdit: '',
-                    carrierToEdit: 0,
                     editingContactId: 0
                 }
             });

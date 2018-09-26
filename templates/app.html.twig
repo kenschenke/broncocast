@@ -14,14 +14,6 @@
             },
             {% endfor %}
         ];
-        window.Carriers = [
-            {% for carrier in Carriers %}
-            {
-                CarrierId: {{ carrier.CarrierId }},
-                CarrierName: '{{ carrier.CarrierName | raw }}'
-            },
-            {% endfor %}
-        ];
     </script>
     <div id="react-container"></div>
 {% endblock %}

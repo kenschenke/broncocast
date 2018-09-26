@@ -114,13 +114,8 @@ class AdminUsersModel
 
                 $Contacts = [];
                 foreach ($user->getContacts() as $contact) {
-                    $CarrierId = $contact->getCarrierId();
-                    if (is_null($CarrierId)) {
-                        $CarId = 0;
-                    }
                     $Contacts[] = [
                         'Contact' => $contact->getContact(),
-                        'CarrierId' => $CarrierId,
                     ];
                 }
 

@@ -22,7 +22,6 @@ class CopyAllCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->copyTable('carriers', $input, $output);
         $this->copyTable('orgs', $input, $output);
         $this->copyTable('groups', $input, $output);
         $this->copyTable('users', $input, $output);

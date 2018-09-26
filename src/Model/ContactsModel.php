@@ -39,27 +39,8 @@ class ContactsModel
                 throw new \Exception('Key parameter too long');
             }
 
-            $CarId = (int)($request->request->get('CarId', 0));
-            if (!$CarId) {
-                // Verify the input resembles an email address
-
-                if (!preg_match("/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}\b/", $Key))
-                    throw new \Exception("Invalid email address");
-                $Carrier = null;
-            } else {
-                // Drop everything from the the input except digits
-
-                $Key = preg_replace("/[^0-9]/", "", $Key);
-                if (strlen($Key) != 10)
-                    throw new \Exception("Mobile numbers must be 10 digits");
-
-                // Make sure the CarId is valid
-
-                $carrRepo = $this->em->getRepository('App:Carriers');
-                $Carrier = $carrRepo->find($CarId);
-                if (is_null($Carrier)) {
-                    throw new \Exception('Carrier Id is not valid');
-                }
+            if (!$this->messageUtil->IsPhone($Key) && !$this->messageUtil->IsEmail($Key)) {
+                throw new \Exception('The new contact record does not resemble an email or phone number');
             }
 
             // Make sure this contact record doesn't already exist
@@ -75,9 +56,6 @@ class ContactsModel
             $user = $this->tokenStorage->getToken()->getUser();
             $contact->setUser($user);
             $contact->setContact($Key);
-            if (!is_null($Carrier)) {
-                $contact->setCarrierId($CarId);
-            }
             $this->em->persist($contact);
             $this->em->flush();
 
@@ -123,23 +101,11 @@ class ContactsModel
 
     public function GetContactsForUser(Users $user)
     {
-        $carrRepo = $this->em->getRepository('App:Carriers');
-
         $results = [];
         foreach ($user->getContacts() as $contact) {
-            $CarName = '';
-            if ($contact->getCarrierId() !== null) {
-                $carrier = $carrRepo->find($contact->getCarrierId());
-                if ($carrier !== null) {
-                    $CarName = $carrier->getName();
-                }
-            }
-
             $results[] = [
                 'ContactId' => $contact->getId(),
                 'Contact' => $contact->getContact(),
-                'CarId' => $contact->getCarrierId(),
-                'CarName' => $CarName,
             ];
         }
 
@@ -203,31 +169,11 @@ class ContactsModel
                 throw new \Exception('This contact record belongs to a different user');
             }
 
-            $CarId = (int)($request->request->get('CarId', 0));
-            if (!$CarId) {
-                // Verify the input resembles a valid email address.
-
-                if (!preg_match("/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}\b/", $Key))
-                    throw new \Exception("Invalid email address");
-                $Carrier = null;
-            } else {
-                // Drop everything from the the input except digits
-
-                $Key = preg_replace("/[^0-9]/", "", $Key);
-                if (strlen($Key) != 10)
-                    throw new \Exception("Mobile numbers must be 10 digits");
-
-                // Make sure the CarId is valid
-
-                $carrRepo = $this->em->getRepository('App:Carriers');
-                $Carrier = $carrRepo->find($CarId);
-                if (is_null($Carrier)) {
-                    throw new \Exception('Carrier Id is not valid');
-                }
+            if (!$this->messageUtil->IsPhone($Key) && !$this->messageUtil->IsEmail($Key)) {
+                throw new \Exception('The contact information does not resemble an email or phone number');
             }
 
             $Contact->setContact($Key);
-            $Contact->setCarrierId($CarId);
             $this->em->persist($Contact);
             $this->em->flush();
 

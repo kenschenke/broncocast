@@ -50,19 +50,9 @@ class AppModel
             }
         }
 
-        $Carriers = [];
-        $carriers = $this->em->getRepository('App:Carriers')->findBy([], ['name' => 'ASC']);
-        foreach ($carriers as $carrier) {
-            $Carriers[] = [
-                'CarrierId' => $carrier->getId(),
-                'CarrierName' => str_replace('\'', '\\\'', $carrier->getName())
-            ];
-        }
-
         return [
             'IsSystemAdmin' => $IsSystemAdmin,
             'AdminOrgs' => $AdminOrgs,
-            'Carriers' => $Carriers,
         ];
     }
 }

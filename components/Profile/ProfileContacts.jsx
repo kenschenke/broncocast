@@ -28,8 +28,8 @@ class ProfileContactsUi extends React.Component {
     render() {
         const contacts = this.props.Contacts.map(contact => {
             let display = contact.Contact;
-            if (contact.CarId) {
-                display = formatPhoneNumber(contact.Contact) + ` (${contact.CarName})`;
+            if (display.length === 10 && display.search(/[^0-9]/) === -1) {
+                display = formatPhoneNumber(contact.Contact);
             }
             return (
                 <li key={contact.ContactId} style={{cursor:'pointer'}} onClick={() => this.props.contactSelected(contact.ContactId)} className={'list-group-item' + (contact.ContactId === this.props.SelectedContactId ? ' list-group-item-dark' : '')}>
@@ -85,7 +85,6 @@ class ProfileContactsUi extends React.Component {
                 />
                 <EditPhone show={this.props.ShowPhoneDialog}
                            phone={this.props.PhoneToEdit}
-                           carrierId={this.props.CarrierToEdit}
                            cancelClicked={this.props.phoneCancelClicked}
                            okClicked={this.props.phoneOkClicked}
                 />
@@ -95,7 +94,6 @@ class ProfileContactsUi extends React.Component {
 }
 
 ProfileContactsUi.propTypes = {
-    CarrierToEdit: PropTypes.number.isRequired,
     Contacts: PropTypes.array.isRequired,
     EmailToEdit: PropTypes.string.isRequired,
     PhoneToEdit: PropTypes.string.isRequired,

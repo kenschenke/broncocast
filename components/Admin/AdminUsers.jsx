@@ -57,12 +57,8 @@ class AdminUsersUi extends React.Component {
 
         const contacts = item.Contacts.map(contact => {
             let display = contact.Contact;
-            if (contact.CarrierId) {
+            if (display.length === 10 && display.indexOf(/[^0-9]/) === -1) {
                 display = formatPhoneNumber(display);
-                const carriers = window.Carriers.filter(carrier => carrier.CarrierId === contact.CarrierId);
-                if (carriers.length === 1) {
-                    display += ` (${carriers[0].CarrierName})`;
-                }
             }
             return <div key={contact.Contact} className="ml-3">{display}</div>
         });

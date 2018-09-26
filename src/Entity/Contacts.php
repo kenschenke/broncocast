@@ -30,11 +30,6 @@ class Contacts
     private $contact;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $carrierId;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $rev;
@@ -134,18 +129,6 @@ class Contacts
     public function setContact(string $contact): self
     {
         $this->contact = $contact;
-
-        return $this;
-    }
-
-    public function getCarrierId(): ?int
-    {
-        return $this->carrierId;
-    }
-
-    public function setCarrierId(?int $carrierId): self
-    {
-        $this->carrierId = $carrierId;
 
         return $this;
     }

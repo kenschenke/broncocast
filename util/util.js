@@ -1,5 +1,5 @@
 export const formatPhoneNumber = value => {
-    if (value.length !== 10 || value.indexOf(/[^0-9]/) !== -1) {
+    if (value.length !== 10 || value.search(/[^0-9]/) !== -1) {
         return value;
     }
 
