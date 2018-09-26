@@ -4,6 +4,7 @@ namespace App\Model;
 
 use App\Entity\Contacts;
 use App\Entity\Users;
+use App\Util\MessageUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -13,13 +14,15 @@ class ContactsModel
     private $em;
     private $tokenStorage;
     private $requestStack;
+    private $messageUtil;
 
     public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage,
-                                RequestStack $requestStack)
+                                RequestStack $requestStack, MessageUtil $messageUtil)
     {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
         $this->requestStack = $requestStack;
+        $this->messageUtil = $messageUtil;
     }
 
     public function AddContact()
@@ -141,6 +144,38 @@ class ContactsModel
         }
 
         return $results;
+    }
+
+    public function TestContact($id)
+    {
+        try {
+            $UserId = $this->tokenStorage->getToken()->getUser()->getId();
+
+            $Contact = $this->em->getRepository('App:Contacts')->find($id);
+            if (is_null($Contact)) {
+                throw new \Exception('Contact record not found');
+            }
+            if ($Contact->getUserId() !== $UserId) {
+                throw new \Exception('Unauthorized for contact record');
+            }
+
+            $TestMessage = 'This is a test messages from BroncoCast';
+            $ContactStr = $Contact->getContact();
+            if ($this->messageUtil->IsEmail($ContactStr)) {
+                $this->messageUtil->SendEmail([$ContactStr], $TestMessage, null, null, null);
+            } elseif ($this->messageUtil->IsPhone($ContactStr)) {
+                $this->messageUtil->SendSMS([[
+                    'ContactId' => $id,
+                    'Phone' => $ContactStr,
+                ]], $TestMessage);
+            } else {
+                throw new \Exception('Unrecognized contact type');
+            }
+
+            return ['Success' => true];
+        } catch (\Exception $e) {
+            return ['Success' => false, 'Error' => $e->getMessage()];
+        }
     }
 
     public function UpdateContact($id)

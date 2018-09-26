@@ -7,7 +7,7 @@ import { EditEmail } from './EditEmail.jsx';
 import { EditPhone } from './EditPhone.jsx';
 import { formatPhoneNumber } from '../../util/util';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import faEnvelope from '@fortawesome/fontawesome-free-solid/faEnvelope';
+import faComment from '@fortawesome/fontawesome-free-solid/faComment';
 import faEdit from '@fortawesome/fontawesome-free-solid/faEdit';
 import faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
 import faPlus from '@fortawesome/fontawesome-free-solid/faPlus';
@@ -37,7 +37,7 @@ class ProfileContactsUi extends React.Component {
                     { contact.ContactId === this.props.SelectedContactId &&
                         <div className="mt-2">
                             <button type="button" className="btn btn-sm btn-secondary" onClick={this.props.editClicked}><FontAwesomeIcon icon={faEdit}/> Edit</button>
-                            <button type="button" className="btn btn-sm btn-secondary ml-2" onClick={() => this.setState({ShowTestSentDialog:true})}><FontAwesomeIcon icon={faEnvelope}/> Test</button>
+                            <button type="button" className="btn btn-sm btn-secondary ml-2" onClick={this.props.testClicked}><FontAwesomeIcon icon={faComment}/> Test</button>
                             <button type="button" className="btn btn-sm btn-danger ml-2" onClick={this.props.deleteClicked}><FontAwesomeIcon icon={faTrash}/> Delete</button>
                         </div>
                     }
@@ -115,7 +115,8 @@ ProfileContactsUi.propTypes = {
     newEmailClicked: PropTypes.func.isRequired,
     newPhoneClicked: PropTypes.func.isRequired,
     phoneCancelClicked: PropTypes.func.isRequired,
-    phoneOkClicked: PropTypes.func.isRequired
+    phoneOkClicked: PropTypes.func.isRequired,
+    testClicked: PropTypes.func.isRequired
 };
 
 export const ProfileContacts = connect(mapProfileContactsProps, mapProfileContactsDispatch)(ProfileContactsUi);

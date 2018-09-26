@@ -80,6 +80,11 @@ class Broadcasts
      */
     private $recipients;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isSent;
+
     public function __construct()
     {
         $this->attachments = new ArrayCollection();
@@ -280,5 +285,17 @@ class Broadcasts
     public function getRecipients()
     {
         return $this->recipients;
+    }
+
+    public function getIsSent(): ?bool
+    {
+        return $this->isSent;
+    }
+
+    public function setIsSent(bool $isSent): self
+    {
+        $this->isSent = $isSent;
+
+        return $this;
     }
 }

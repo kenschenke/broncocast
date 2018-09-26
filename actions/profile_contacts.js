@@ -211,3 +211,24 @@ export const savePhone = () => (dispatch, getState) => {
     }
 };
 
+export const testContact = () => (dispatch, getState) => {
+    const state = getState();
+    $.ajax(`/api/contacts/test/${state.profile_contacts.selectedContactId}`, {
+        method: 'PUT',
+        success: data => {
+            if (!data.Success) {
+                alert(data.Error);
+                // return;
+            }
+
+            // dispatch({
+            //     type: C.SET_PROFILE_CONTACTS_DATA,
+            //     payload: {
+            //         contacts: state.profile_contacts.contacts.filter(contact => contact.ContactId !== state.profile_contacts.selectedContactId),
+            //         showDeleteDialog: false,
+            //         selectedContactId: 0
+            //     }
+            // });
+        }
+    });
+};

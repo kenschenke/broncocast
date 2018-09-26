@@ -49,4 +49,15 @@ class ContactsController extends Controller
     {
         return $this->json($model->UpdateContact($id));
     }
+
+    /**
+     * @Route("/api/contacts/test/{id}", name="contacts_test", methods="PUT")
+     * @param $id
+     * @param ContactsModel $model
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function testContact($id, ContactsModel $model)
+    {
+        return $this->json($model->TestContact($id));
+    }
 }

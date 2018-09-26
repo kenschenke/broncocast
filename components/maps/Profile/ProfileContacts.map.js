@@ -1,4 +1,4 @@
-import { deleteContact, editContact, getContacts, saveEmail, savePhone } from '../../../actions/profile_contacts';
+import { deleteContact, editContact, getContacts, saveEmail, savePhone, testContact } from '../../../actions/profile_contacts';
 import C from '../../../constants';
 
 export const mapProfileContactsProps = state => {
@@ -113,6 +113,10 @@ export const mapProfileContactsDispatch = dispatch => {
 
         phoneOkClicked() {
             dispatch(savePhone());
+        },
+
+        testClicked() {
+            dispatch(testContact());
         }
     };
 };

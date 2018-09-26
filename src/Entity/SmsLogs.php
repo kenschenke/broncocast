@@ -2,15 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ContactsRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\SmsLogsRepository")
  *
  * @ORM\HasLifecycleCallbacks()
  */
-class Contacts
+class SmsLogs
 {
     /**
      * @ORM\Id()
@@ -22,17 +21,17 @@ class Contacts
     /**
      * @ORM\Column(type="integer")
      */
-    private $userId;
+    private $contactId;
 
     /**
-     * @ORM\Column(type="string", length=50, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $contact;
+    private $code;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $carrierId;
+    private $message;
 
     /**
      * @ORM\Column(type="integer")
@@ -50,23 +49,11 @@ class Contacts
     private $updated;
 
     /**
-     * @var Users
-     * @ORM\ManyToOne(targetEntity="Users", inversedBy="contacts")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Contacts
+     * @ORM\ManyToOne(targetEntity="Contacts", inversedBy="smsLogs")
+     * @ORM\JoinColumn(name="contact_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    private $user;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="SmsLogs", mappedBy="contact")
-     */
-    private $smsLogs;
-
-    public function __construct()
-    {
-        $this->smsLogs = new ArrayCollection();
-    }
+    private $contact;
 
     /**
      * Called when new record saved
@@ -95,57 +82,57 @@ class Contacts
         return $this->id;
     }
 
-    public function getUserId(): ?int
+    public function getContactId(): ?int
     {
-        return $this->userId;
+        return $this->contactId;
     }
 
-    public function setUserId(int $userId): self
+    public function setContactId(int $contactId): self
     {
-        $this->userId = $userId;
+        $this->contactId = $contactId;
 
         return $this;
     }
 
     /**
-     * @return Users
+     * @return Contacts
      */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param Users|null $user
-     * @return $this
-     */
-    public function setUser(Users $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getContact(): ?string
+    public function getContact()
     {
         return $this->contact;
     }
 
-    public function setContact(string $contact): self
+    /**
+     * @param Contacts|null $contact
+     * @return $this
+     */
+    public function setContact(Contacts $contact = null)
     {
         $this->contact = $contact;
 
         return $this;
     }
 
-    public function getCarrierId(): ?int
+    public function getCode(): ?string
     {
-        return $this->carrierId;
+        return $this->code;
     }
 
-    public function setCarrierId(?int $carrierId): self
+    public function setCode(string $code): self
     {
-        $this->carrierId = $carrierId;
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }
@@ -184,32 +171,5 @@ class Contacts
         $this->updated = $updated;
 
         return $this;
-    }
-
-    /**
-     * @param SmsLogs $smsLog
-     * @return $this
-     */
-    public function addSmsLog(SmsLogs $smsLog)
-    {
-        $this->smsLogs[] = $smsLog;
-
-        return $this;
-    }
-
-    /**
-     * @param SmsLogs $smsLog
-     */
-    public function removeSmsLog(SmsLogs $smsLog)
-    {
-        $this->smsLogs->removeElement($smsLog);
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getSmsLogs()
-    {
-        return $this->smsLogs;
     }
 }
