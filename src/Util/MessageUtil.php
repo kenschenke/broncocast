@@ -8,7 +8,6 @@ use Mailgun\Mailgun;
 use Twilio\Rest\Client;
 
 /*
- * Purge other org records when deleting an org
  * Purge broadcasts and old smslog records in Periodic
  * Update Periodic to use GMT when comparing scheduled date
  * Write lock file in Periodic and send email when lock file is stale for 3 runs in a row

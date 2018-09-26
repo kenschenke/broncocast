@@ -32,6 +32,38 @@ class SystemOrgsModel
                 throw new \Exception('Organization record not found');
             }
 
+            $res = $this->em->getConnection()->executeQuery(
+                'SELECT id FROM attachments WHERE broadcast_id IN ' .
+                '(SELECT id FROM broadcasts WHERE org_id = ?)', [$OrgId]
+            );
+            $repo = $this->em->getRepository('App:Attachments');
+            while (($row = $res->fetch(\PDO::FETCH_NUM))) {
+                $attach = $repo->find($row[0]);
+                if (is_null($attach)) {
+                    throw new \Exception('Attachment record not found');
+                }
+                unlink(getenv('UPLOAD_FOLDER') . '/' . $attach->getLocalName());
+                $this->em->remove($attach);
+            }
+
+            $this->em->getConnection()->executeQuery(
+                'DELETE FROM recipients WHERE broadcast_id IN ' .
+                '(SELECT id FROM broadcasts WHERE org_id = ?)', [$OrgId]
+            );
+            $this->em->getConnection()->executeQuery(
+                'DELETE FROM broadcasts WHERE org_id = ?', [$OrgId]
+            );
+            $this->em->getConnection()->executeQuery(
+                'DELETE FROM grp_members WHERE grp_id IN ' .
+                '(SELECT id FROM groups WHERE org_id = ?)', [$OrgId]
+            );
+            $this->em->getConnection()->executeQuery(
+                'DELETE FROM groups WHERE org_id = ?', [$OrgId]
+            );
+            $this->em->getConnection()->executeQuery(
+                'DELETE FROM org_members WHERE org_id = ?', [$OrgId]
+            );
+
             $this->em->remove($Org);
             $this->em->flush();
 
