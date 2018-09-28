@@ -22,6 +22,8 @@ export default combineReducers({
     admin_org: dataReducer(C.SET_ADMIN_ORG),
     admin_users: dataReducer(C.SET_ADMIN_USERS_DATA),
     admin_groups: dataReducer(C.SET_ADMIN_GROUPS_DATA),
+    admin_broadcasts: dataReducer(C.SET_ADMIN_BROADCASTS_DATA),
+    admin_newbroadcast: dataReducer(C.SET_ADMIN_NEWBROADCAST_DATA),
     system_orgs: dataReducer(C.SET_SYSTEM_ORGS_DATA),
     forms: DuxFormReducer,
     duxtable: DuxTableReducer

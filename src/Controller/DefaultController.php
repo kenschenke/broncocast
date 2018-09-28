@@ -112,6 +112,30 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/admin/broadcasts", name="admin_broadcasts")
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenStorageInterface $tokenStorage
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function adminBroadcastsAction(AuthorizationCheckerInterface $authorizationChecker,
+                                          TokenStorageInterface $tokenStorage, AppModel $appModel)
+    {
+        if ($authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $roles = $tokenStorage->getToken()->getUser()->getRoles();
+            if (!in_array('ROLE_ORG_ADMIN', $roles) && !in_array('ROLE_SYSTEM_ADMIN', $roles)) {
+                return $this->redirectToRoute('mainpage');
+            } else {
+                $params = $appModel->GetAppParams();
+                $params['InitialRoute'] = 'admin/broadcasts';
+                return $this->render('app.html.twig', $params);
+            }
+        } else {
+            return $this->redirectToRoute('auth_login');
+        }
+    }
+
+    /**
      * @Route("/system/orgs", name="system_orgs")
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenStorageInterface $tokenStorage

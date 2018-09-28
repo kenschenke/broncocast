@@ -9,7 +9,8 @@ export const initAdminOrg = () => dispatch => {
                 type: C.SET_ADMIN_ORG,
                 payload: {
                     orgId: window.AdminOrgs[a].OrgId,
-                    orgName: window.AdminOrgs[a].OrgName
+                    orgName: window.AdminOrgs[a].OrgName,
+                    defaultTZ: window.AdminOrgs[a].DefaultTZ
                 }
             });
 

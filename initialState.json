@@ -29,7 +29,8 @@
   },
   "admin_org": {
     "orgId": 0,
-    "orgName": ""
+    "orgName": "",
+    "defaultTZ": ""
   },
   "admin_users": {
     "fetching": false,
@@ -52,6 +53,22 @@
     "members": [],
     "nonMembers": [],
     "showHiddenNonMembers": false
+  },
+  "admin_broadcasts": {
+    "fetching": false,
+    "broadcasts": []
+  },
+  "admin_newbroadcast": {
+    "show": false,
+    "fetchingGroups": false,
+    "uploadingAttachment": false,
+    "attachmentSuccess": false,
+    "attachmentFriendlyName": "",
+    "attachmentLocalName": "",
+    "attachmentMimeType": "",
+    "groups": {},
+    "selected": [],
+    "timezones": []
   },
   "system_orgs": {
     "orgs": [],

@@ -28,18 +28,17 @@ class MyBroadcastsModel
             $User = $this->tokenStorage->getToken()->getUser();
 
             $Broadcasts = [];
-            $dateFmt = 'D M j, Y g:i a';
             foreach ($User->getBroadcasts() as $Recip) {
                 $Broadcast = $Recip->getBroadcast();
+                $Delivered = $Broadcast->getDelivered();
+                if (is_null($Delivered)) {
+                    continue;
+                }
 
                 $LongMsg = $Broadcast->getLongMsg();
                 if (is_null($LongMsg)) {
                     $LongMsg = '';
                 }
-                $Scheduled = $Broadcast->getScheduled();
-                $Created = $Broadcast->getCreated();
-                $Sent = is_null($Scheduled) ? $Created->format($dateFmt) : $Scheduled->format($dateFmt);
-                $Timestamp = is_null($Scheduled) ? $Created->getTimestamp() : $Scheduled->getTimestamp();
 
                 $AttachmentUrl = '';
                 foreach ($Broadcast->getAttachments() as $attachment) {
@@ -51,8 +50,8 @@ class MyBroadcastsModel
                     'BroadcastId' => $Broadcast->getId(),
                     'ShortMsg' => $Broadcast->getShortMsg(),
                     'LongMsg' => $LongMsg,
-                    'Sent' => $Sent,
-                    'Timestamp' => $Timestamp,
+                    'Delivered' => $Delivered->format('D M j, Y g:i a'),
+                    'Timestamp' => $Delivered->getTimestamp(),
                     'UsrName' => $Broadcast->getUsrName(),
                     'AttachmentUrl' => $AttachmentUrl,
                 ];

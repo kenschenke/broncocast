@@ -9,6 +9,7 @@ use Twilio\Rest\Client;
 
 /*
  * Purge broadcasts and old smslog records in Periodic
+ * Purge orphaned files in the attachment folder
  * Update Periodic to use GMT when comparing scheduled date
  * Write lock file in Periodic and send email when lock file is stale for 3 runs in a row
  * Allow inspection of smslog records in Users list
@@ -57,7 +58,7 @@ class MessageUtil
         $files = [];
         $attach_params = [];
         if (!is_null($AttachLocal) && !is_null($AttachFriendly) && !is_null($AttachMimeType)) {
-            $files[] = getenv('UPLOAD_FOLDER') . '/' . $AttachLocal;
+            $files[] = getenv('BRONCOCAST_ATTACHMENTS_DIR') . '/' . $AttachLocal;
             $attach_params = ['attachment' => $files];
         }
 

@@ -88,7 +88,7 @@ class SendBroadcast
 
         // Done
 
-        $Broadcast->setIsSent(true);
+        $Broadcast->setDelivered(new \DateTime());
         $this->em->persist($Broadcast);
         $this->em->flush();
     }
@@ -99,7 +99,7 @@ class SendBroadcast
         // broadcasts are stored in UTC
         $Now = new \DateTime();
         $Now->setTimezone(new \DateTimeZone('UTC'));
-        $Broadcasts = $this->em->getRepository('App:Broadcasts')->findBy(['isSent' => false]);
+        $Broadcasts = $this->em->getRepository('App:Broadcasts')->findBy(['delivered' => null]);
         foreach ($Broadcasts as $Broadcast) {
             $Scheduled = $Broadcast->getScheduled();
             if (is_null($Scheduled) || $Now > $Scheduled) {

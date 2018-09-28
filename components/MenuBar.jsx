@@ -49,6 +49,7 @@ class MenuBarUi extends React.Component {
                                 <div className="dropdown-menu">
                                     <Link className="dropdown-item" to="/admin/users">Users</Link>
                                     <Link className="dropdown-item" to="/admin/groups">Groups</Link>
+                                    <Link className="dropdown-item" to="/admin/broadcasts">Broadcasts</Link>
                                     { window.AdminOrgs.length > 1 &&
                                     <div className="dropdown-divider"></div>
                                     }

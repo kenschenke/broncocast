@@ -81,9 +81,9 @@ class Broadcasts
     private $recipients;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetimetz", nullable=true)
      */
-    private $isSent;
+    private $delivered;
 
     public function __construct()
     {
@@ -287,14 +287,14 @@ class Broadcasts
         return $this->recipients;
     }
 
-    public function getIsSent(): ?bool
+    public function getDelivered(): ?\DateTimeInterface
     {
-        return $this->isSent;
+        return $this->delivered;
     }
 
-    public function setIsSent(bool $isSent): self
+    public function setDelivered(?\DateTimeInterface $delivered): self
     {
-        $this->isSent = $isSent;
+        $this->delivered = $delivered;
 
         return $this;
     }

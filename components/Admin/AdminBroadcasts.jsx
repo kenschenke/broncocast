@@ -1,30 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { mapMyBroadcastsProps, mapMyBroadcastsDispatch } from '../maps/Routes/MyBroadcasts.map';
+import { mapAdminBroadcastsProps, mapAdminBroadcastsDispatch } from '../maps/Admin/AdminBroadcasts.map';
 import { connect } from 'react-redux';
 import { DuxTable } from 'duxtable';
 import { ViewBroadcast } from '../ViewBroadcast.jsx';
+import { NewBroadcast } from './NewBroadcast.jsx';
 
-class MyBroadcastsUi extends React.Component {
+class AdminBroadcastsUi extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            adminOrgId: 0,
             showViewBroadcast: false,
             viewSentBy: '',
-            viewDelivered: '',
+            viewTime: '',
             viewShortMsg: '',
             viewLongMsg: '',
-            viewAttachmentUrl: ''
+            viewAttachmentUrl: '',
+            viewRecipients: []
         };
     }
 
     componentDidMount() {
-        this.props.init();
+        this.props.adminOrgChanged();
+    }
+
+    componentDidUpdate() {
+        if (this.props.adminOrgId !== this.state.adminOrgId) {
+            this.props.adminOrgChanged();
+            this.setState({adminOrgId: this.props.adminOrgId});
+        }
     }
 
     selectedRowRender = (item, colNum) => {
-        if (colNum === 2) {
+        if (colNum === 3) {
             return (
                 <div>
                     <div className="float-left" style={{width:'80%', overflow:'hidden', textOverflow:'ellipsis'}}>
@@ -46,18 +56,19 @@ class MyBroadcastsUi extends React.Component {
         this.setState({
             showViewBroadcast: true,
             viewSentBy: item.UsrName,
-            viewDelivered: item.Delivered,
+            viewTime: item.Time,
             viewShortMsg: item.ShortMsg,
             viewLongMsg: item.LongMsg,
-            viewAttachmentUrl: item.AttachmentUrl
+            viewAttachmentUrl: item.AttachmentUrl,
+            viewRecipients: item.Recipients
         });
     };
 
     render() {
         const columns = [
             {
-                title: 'Delivered',
-                field: 'Delivered',
+                title: 'Time',
+                field: 'Time',
                 sortCallback: (b1, b2, sortAscending) => {
                     if (b1.Timestamp > b2.Timestamp) {
                         return sortAscending ? 1 : -1;
@@ -72,6 +83,16 @@ class MyBroadcastsUi extends React.Component {
                     lg: false
                 },
                 width: 225
+            },
+            {
+                title: 'Status',
+                render: item => item.IsDelivered ? 'Delivered' : 'Scheduled',
+                sortable: false,
+                hidden: {
+                    xs: true,
+                    lg: false
+                },
+                width: 100
             },
             {
                 title: 'Sent By',
@@ -90,6 +111,8 @@ class MyBroadcastsUi extends React.Component {
 
         return (
             <div>
+                <button className="btn btn-sm btn-secondary mb-2" onClick={this.props.newBroadcastClicked}>New Broadcast</button>
+
                 <DuxTable name="mybroadcasts"
                           columns={columns}
                           data={this.props.broadcasts}
@@ -101,29 +124,32 @@ class MyBroadcastsUi extends React.Component {
                           selectedRenderCallback={this.selectedRowRender}
                           fetchingData={this.props.fetching}
                           fetchingMsg="Fetching Broadcasts"
-                          emptyMsg="No Broadcasts Found"
                 />
 
                 <ViewBroadcast show={this.state.showViewBroadcast}
                                sentBy={this.state.viewSentBy}
-                               delivered={this.state.viewDelivered}
+                               delivered={this.state.viewTime}
                                shortMsg={this.state.viewShortMsg}
                                longMsg={this.state.viewLongMsg}
                                attachmentUrl={this.state.viewAttachmentUrl}
                                closeClicked={() => this.setState({showViewBroadcast:false})}
+                               recipients={this.state.viewRecipients}
                 />
+
+                {this.props.showNewBroadcast && <NewBroadcast/>}
             </div>
         );
     }
 }
 
-MyBroadcastsUi.propTypes = {
+AdminBroadcastsUi.propTypes = {
+    adminOrgId: PropTypes.number.isRequired,
     fetching: PropTypes.bool.isRequired,
     broadcasts: PropTypes.array.isRequired,
+    showNewBroadcast: PropTypes.bool.isRequired,
 
-    init: PropTypes.func.isRequired
+    adminOrgChanged: PropTypes.func.isRequired,
+    newBroadcastClicked: PropTypes.func.isRequired
 };
 
-const Container = connect(mapMyBroadcastsProps, mapMyBroadcastsDispatch)(MyBroadcastsUi);
-
-export default Container;
+export const AdminBroadcasts = connect(mapAdminBroadcastsProps, mapAdminBroadcastsDispatch)(AdminBroadcastsUi);

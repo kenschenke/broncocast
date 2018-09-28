@@ -29,7 +29,7 @@ export class ViewBroadcast extends React.Component {
                 onClick: () => this.setState({showRecipientsDialog:true})
             });
         }
-        const recipients = this.props.recipients.map(recip => <div>{recip}</div>);
+        const recipients = this.props.recipients.map(recip => <div key={recip}>{recip}</div>);
 
         return (
             <div>

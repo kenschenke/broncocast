@@ -42,7 +42,7 @@ class SystemOrgsModel
                 if (is_null($attach)) {
                     throw new \Exception('Attachment record not found');
                 }
-                unlink(getenv('UPLOAD_FOLDER') . '/' . $attach->getLocalName());
+                unlink(getenv('BRONCOCAST_ATTACHMENTS_DIR') . '/' . $attach->getLocalName());
                 $this->em->remove($attach);
             }
 

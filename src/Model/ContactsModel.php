@@ -125,7 +125,7 @@ class ContactsModel
                 throw new \Exception('Unauthorized for contact record');
             }
 
-            $TestMessage = 'This is a test messages from BroncoCast';
+            $TestMessage = 'This is a test message from BroncoCast';
             $ContactStr = $Contact->getContact();
             if ($this->messageUtil->IsEmail($ContactStr)) {
                 $this->messageUtil->SendEmail([$ContactStr], $TestMessage, null, null, null);

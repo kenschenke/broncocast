@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20180926142847 extends AbstractMigration
+final class Version20180926182459 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -16,7 +16,7 @@ final class Version20180926142847 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE attachments (id INT AUTO_INCREMENT NOT NULL, broadcast_id INT NOT NULL, local_name VARCHAR(255) NOT NULL, friendly_name VARCHAR(255) NOT NULL, mime_type VARCHAR(255) NOT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, INDEX IDX_47C4FAD69C7E80E0 (broadcast_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE broadcasts (id INT AUTO_INCREMENT NOT NULL, org_id INT NOT NULL, usr_name VARCHAR(30) NOT NULL, scheduled DATETIME DEFAULT NULL, short_msg VARCHAR(140) NOT NULL, long_msg VARCHAR(2048) DEFAULT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, is_sent TINYINT(1) NOT NULL, INDEX IDX_D64238E4F4837C1B (org_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE broadcasts (id INT AUTO_INCREMENT NOT NULL, org_id INT NOT NULL, usr_name VARCHAR(30) NOT NULL, scheduled DATETIME DEFAULT NULL, short_msg VARCHAR(140) NOT NULL, long_msg VARCHAR(2048) DEFAULT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, delivered DATETIME DEFAULT NULL, INDEX IDX_D64238E4F4837C1B (org_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE contacts (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, contact VARCHAR(50) NOT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, UNIQUE INDEX UNIQ_334015734C62E638 (contact), INDEX IDX_33401573A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE groups (id INT AUTO_INCREMENT NOT NULL, org_id INT NOT NULL, grp_name VARCHAR(30) NOT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, INDEX IDX_F06D3970F4837C1B (org_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE grp_members (id INT AUTO_INCREMENT NOT NULL, grp_id INT NOT NULL, user_id INT NOT NULL, rev INT NOT NULL, created DATETIME NOT NULL, updated DATETIME NOT NULL, INDEX IDX_44BD48CCD51E9150 (grp_id), INDEX IDX_44BD48CCA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');

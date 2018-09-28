@@ -8,6 +8,7 @@ import Profile from './Routes/Profile.jsx';
 import MyBroadcasts from './Routes/MyBroadcasts.jsx';
 import { AdminUsers } from './Admin/AdminUsers.jsx';
 import { AdminGroups } from './Admin/AdminGroups.jsx';
+import { AdminBroadcasts } from './Admin/AdminBroadcasts.jsx';
 import { SystemOrgs } from './System/SystemOrgs.jsx';
 import About from './Routes/About.jsx';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
@@ -34,6 +35,7 @@ class AppUi extends React.Component {
                                     <Route path="/broadcasts" component={MyBroadcasts}/>
                                     <Route path="/admin/users" component={AdminUsers}/>
                                     <Route path="/admin/groups" component={AdminGroups}/>
+                                    <Route path="/admin/broadcasts" component={AdminBroadcasts}/>
                                     <Route path="/system/orgs" component={SystemOrgs}/>
                                     <Route path="/about" component={About}/>
                                 </div>
