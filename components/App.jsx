@@ -11,6 +11,7 @@ import { AdminGroups } from './Admin/AdminGroups.jsx';
 import { AdminBroadcasts } from './Admin/AdminBroadcasts.jsx';
 import { SystemOrgs } from './System/SystemOrgs.jsx';
 import About from './Routes/About.jsx';
+import { Register } from './Profile/Register.jsx';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 
 class AppUi extends React.Component {
@@ -38,6 +39,7 @@ class AppUi extends React.Component {
                                     <Route path="/admin/broadcasts" component={AdminBroadcasts}/>
                                     <Route path="/system/orgs" component={SystemOrgs}/>
                                     <Route path="/about" component={About}/>
+                                    <Route path="/register" component={Register}/>
                                 </div>
                             </div>
                         </div>

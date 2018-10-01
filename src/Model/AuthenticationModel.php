@@ -2,11 +2,15 @@
 
 namespace App\Model;
 
+use App\Entity\Contacts;
+use App\Entity\Users;
 use App\Security\PwdHelper;
+use App\Util\MessageUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AuthenticationModel
@@ -16,15 +20,20 @@ class AuthenticationModel
     protected $requestStack;
     protected $em;
     protected $pwdHelper;
+    protected $messageUtil;
+    protected $tokenStorage;
 
     public function __construct(\Twig_Environment $twig, AuthenticationUtils $authenticationUtils,
-                                RequestStack $requestStack, EntityManagerInterface $em, PwdHelper $pwdHelper)
+                                RequestStack $requestStack, EntityManagerInterface $em, PwdHelper $pwdHelper,
+                                MessageUtil $messageUtil, TokenStorageInterface $tokenStorage)
     {
         $this->twig = $twig;
         $this->authenticationUtils = $authenticationUtils;
         $this->requestStack = $requestStack;
         $this->em = $em;
         $this->pwdHelper = $pwdHelper;
+        $this->messageUtil = $messageUtil;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -45,6 +54,61 @@ class AuthenticationModel
             'last_username' => $lastUsername,
             'error' => $error
         ]));
+    }
+
+    public function Register()
+    {
+        try {
+            $request = $this->requestStack->getCurrentRequest();
+            if (!$request->request->has('email')) {
+                throw new \Exception('email parameter missing');
+            }
+            if (!$request->request->has('password1')) {
+                throw new \Exception('password1 parameter missing');
+            }
+            if (!$request->request->has('password2')) {
+                throw new \Exception('password2 parameter missing');
+            }
+
+            $email = strtolower(trim($request->request->get('email')));
+            $password1 = trim($request->request->get('password1'));
+            $password2 = trim($request->request->get('password2'));
+
+            $Contact = $this->em->getRepository('App:Contacts')->findOneBy(['contact' => $email]);
+            if (!is_null($Contact)) {
+                throw new \Exception('An account with that email address already exists');
+            }
+
+            if ($password1 !== $password2) {
+                throw new \Exception('Passwords do not match');
+            }
+
+            $User = new Users();
+            $User->setFullname('');
+            $User->setLegacyPassword('');
+            $User->setSalt('');
+            $User->setIsActive(true);
+            $User->setSingleMsg(false);
+            $this->pwdHelper->SaveUserPassword($User, $password1);
+            $this->em->persist($User);
+            $this->em->flush();
+
+            $Contact = new Contacts();
+            $Contact->setUser($User);
+            $Contact->setContact($email);
+            $this->em->persist($Contact);
+            $this->em->flush();
+
+            return new Response($this->twig->render('silentlogin.html.twig', [
+                'username' => $email,
+                'password' => $password1,
+                'redirect' => '/register'
+            ]));
+        } catch (\Exception $e) {
+            return new Response($this->twig->render('register.html.twig', [
+                'err' => $e->getMessage()
+            ]));
+        }
     }
 
     public function Recover($ResetStr)
@@ -100,6 +164,30 @@ class AuthenticationModel
             'err' => '',
             'msg' => 'A message was sent to the email address containing a link to recover the account.'
         ]));
+    }
+
+    public function SendWelcome()
+    {
+        try {
+            $User = $this->tokenStorage->getToken()->getUser();
+            foreach ($User->getContacts() as $Contact) {
+                $phone = $Contact->getContact();
+                if ($this->messageUtil->IsPhone($phone)) {
+                    $recip = [
+                        'ContactId' => $Contact->getId(),
+                        'Phone' => $phone
+                    ];
+                    $this->messageUtil->SendSMS([$recip],
+                        'Thank you for registering with BroncoCast! ' .
+                        'Reply HELP for help. Reply STOP to unsubscribe. ' .
+                        'Msg&Data rates may apply.');
+                }
+            }
+
+            return ['Success' => true];
+        } catch (\Exception $e) {
+            return ['Success' => false, 'Error' => $e->getMessage()];
+        }
     }
 
     public function UpdatePassword()

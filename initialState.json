@@ -23,6 +23,9 @@
     "selectedOrgMemberId": 0,
     "orgMessage": ""
   },
+  "register": {
+    "step": "name"
+  },
   "mybroadcasts": {
     "fetching": false,
     "broadcasts": []

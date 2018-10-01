@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Model\AuthenticationModel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends Controller
@@ -22,12 +23,31 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/auth/register", name="auth_register")
+     * @Route("/auth/register", name="auth_register", methods="GET")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function registerFormAction()
     {
         return $this->render('register.html.twig');
+    }
+
+    /**
+     * @Route("/auth/register", name="auth_register_save", methods="POST")
+     * @return Response
+     */
+    public function registerSaveAction(AuthenticationModel $model)
+    {
+        return $model->Register();
+    }
+
+    /**
+     * @Route("/api/register/welcome", name="register_welcome", methods="PUT")
+     * @param AuthenticationModel $model
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function registerWelcome(AuthenticationModel $model)
+    {
+        return $this->json($model->SendWelcome());
     }
 
     /**

@@ -7,9 +7,12 @@
                 <div class="jumbotron">
                     <h1 class="display-4">BroncoCast</h1>
                     <p class="lead">
-                        Welcome! BroncoCast is an email and text broadcast service. FIRST Robotics Team 1987, The Broncobots,
-                        needed an easy way to reach out to students, parents, and adult mentors with important information and
-                        announcements. Please click Learn more to read more about BroncoCast and how your organization can utilize it.
+                        Welcome! BroncoCast is an email and text broadcast service. FIRST Robotics Team 1987, The
+                        Broncobots,
+                        needed an easy way to reach out to students, parents, and adult mentors with important
+                        information and
+                        announcements. Please click Learn more to read more about BroncoCast and how your organization
+                        can utilize it.
                     </p>
                     <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
                 </div>
@@ -22,21 +25,24 @@
                         Register
                     </div>
                     <div class="card-body">
-                        <div class="form">
+                        <form name="register" action="{{ path('auth_register_save') }}" method="post" role="form">
                             <div class="form-group">
                                 <label>Email</label>
-                                <input class="form-control"/>
+                                <input class="form-control" id="email" name="email" maxlength="50"/>
                             </div>
                             <div class="form-group">
                                 <label>Choose Password</label>
-                                <input type="password" class="form-control"/>
+                                <input class="form-control" id="password1" type="password" name="password1"/>
                             </div>
                             <div class="form-group">
                                 <label>Confirm Password</label>
-                                <input type="password" class="form-control"/>
+                                <input class="form-control" id="password2" type="password" name="password2"/>
                             </div>
+                            {% if err is defined %}
+                                <div><small class="text-danger">{{ err }}</small></div>
+                            {% endif %}
                             <button type="submit" class="btn btn-primary">Register</button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -48,4 +54,21 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function onSubmit() {
+        var pwd1 = $("#password1").val().trim();
+        var pwd2 = $("#password2").val().trim();
+
+        if (pwd1 !== pwd2) {
+            alert('The passwords do not match');
+            return;
+        }
+
+        document.forms.register.submit();
+    }
+</script>
 {% endblock %}

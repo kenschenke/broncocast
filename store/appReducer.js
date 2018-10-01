@@ -18,6 +18,7 @@ export default combineReducers({
     profile_contacts: dataReducer(C.SET_PROFILE_CONTACTS_DATA),
     profile_pwd: dataReducer(C.SET_PROFILE_PWD_DATA),
     profile_orgs: dataReducer(C.SET_PROFILE_ORGS_DATA),
+    register: dataReducer(C.SET_REGISTER_DATA),
     mybroadcasts: dataReducer(C.SET_MYBROADCASTS_DATA),
     admin_org: dataReducer(C.SET_ADMIN_ORG),
     admin_users: dataReducer(C.SET_ADMIN_USERS_DATA),

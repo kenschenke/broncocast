@@ -51,7 +51,7 @@ class AppModel
         }
 
         return [
-            'IsSystemAdmin' => $IsSystemAdmin,
+            'IsSystemAdmin' => $IsSystemAdmin ? 'true' : 'false',
             'AdminOrgs' => $AdminOrgs,
         ];
     }

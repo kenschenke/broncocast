@@ -175,4 +175,21 @@ class DefaultController extends Controller
             return $this->redirectToRoute('auth_login');
         }
     }
+
+    /**
+     * @Route("/register", name="register")
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function registerAction(AuthorizationCheckerInterface $authorizationChecker, AppModel $appModel)
+    {
+        if ($authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $params = $appModel->GetAppParams();
+            $params['InitialRoute'] = 'register';
+            return $this->render('app.html.twig', $params);
+        } else {
+            return $this->redirectToRoute('auth_login');
+        }
+    }
 }
