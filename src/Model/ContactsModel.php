@@ -34,7 +34,7 @@ class ContactsModel
                 throw new \Exception('Key parameter missing');
             }
 
-            $Key = trim($request->request->get('Key'));
+            $Key = strtolower(trim($request->request->get('Key')));
             if (strlen($Key) > 50) {
                 throw new \Exception('Key parameter too long');
             }
@@ -153,7 +153,7 @@ class ContactsModel
                 throw new \Exception('Key parameter missing');
             }
 
-            $Key = trim($request->request->get('Key'));
+            $Key = strtolower(trim($request->request->get('Key')));
             if (strlen($Key) > 50) {
                 throw new \Exception('Key parameter too long');
             }

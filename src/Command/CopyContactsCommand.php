@@ -32,7 +32,7 @@ class CopyContactsCommand extends Command
         $conn = $this->em->getConnection();
         $stmt = $conn->executeQuery(
             'INSERT INTO contacts(id, user_id, contact, created, updated) ' .
-            'SELECT UsrCId, UsrId, Contact, Created, Updated FROM USRC ORDER BY UsrCId'
+            'SELECT UsrCId, UsrId, LOWER(Contact), Created, Updated FROM USRC ORDER BY UsrCId'
         );
         $rowCount = $stmt->rowCount();
         $output->writeln(" - $rowCount row" . ($rowCount===1?"":"s"));

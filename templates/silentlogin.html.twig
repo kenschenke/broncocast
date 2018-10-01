@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <h1 class="display-4">BroncoCast</h1>
+                    <p class="lead">
+                        Welcome! BroncoCast is an email and text broadcast service. FIRST Robotics Team 1987, The Broncobots,
+                        needed an easy way to reach out to students, parents, and adult mentors with important information and
+                        announcements. Please click Learn more to read more about BroncoCast and how your organization can utilize it.
+                    </p>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    Please wait while your account is logged in.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form name="silentlogin" method="post" action="{{ path('login_check') }}">
+        <input type="hidden" name="_username" value="{{ username }}"/>
+        <input type="hidden" name="_password" value="{{ password }}"/>
+    </form>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            setTimeout(function () {
+                document.forms.silentlogin.submit();
+            }, 5000);  // five seconds
+        });
+    </script>
+{% endblock %}

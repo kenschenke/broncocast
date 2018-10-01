@@ -31,12 +31,44 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/auth/recover", name="auth_recover")
+     * @Route("/auth/recover", name="auth_recover", methods="GET")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function recoverFormAction()
     {
-        return $this->render('recover.html.twig');
+        return $this->render('recover.html.twig',
+            ['email' => '', 'err' => '', 'msg' => '']);
+    }
+
+    /**
+     * @Route("/auth/recover/{Token}", name="auth_recover_link", methods="GET")
+     * @param $Token
+     * @param AuthenticationModel $model
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function recoverLink($Token, AuthenticationModel $model)
+    {
+        return $model->Recover($Token);
+    }
+
+    /**
+     * @Route("/auth/recover", name="auth_recover_post", methods="POST")
+     * @param AuthenticationModel $model
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function recoverSendAction(AuthenticationModel $model)
+    {
+        return $model->SendRecoverEmail();
+    }
+
+    /**
+     * @Route("/auth/recover/update", name="auth_recover_updatepwd", methods="POST")
+     * @param AuthenticationModel $model
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function recoverUpdatePassword(AuthenticationModel $model)
+    {
+        return $model->UpdatePassword();
     }
 
     /**

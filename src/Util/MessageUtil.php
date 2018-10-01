@@ -7,17 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mailgun\Mailgun;
 use Twilio\Rest\Client;
 
-/*
- * Purge broadcasts and old smslog records in Periodic
- * Purge orphaned files in the attachment folder
- * Update Periodic to use GMT when comparing scheduled date
- * Write lock file in Periodic and send email when lock file is stale for 3 runs in a row
- * Allow inspection of smslog records in Users list
- * Highlight users in Admin with smslog records
- * Highlight users in Admin with blacklisted numbers
- * Highlight unapproved users in admin
- */
-
 class MessageUtil
 {
     private $em;

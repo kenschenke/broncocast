@@ -22,13 +22,19 @@
                         Recover Account
                     </div>
                     <div class="card-body">
-                        <div class="form">
+                        <form class="form" method="POST" action="{{ url('auth_recover_post') }}">
                             <div class="form-group">
                                 <label>Email</label>
-                                <input class="form-control"/>
+                                <input type="text" class="form-control" id="email" name="email" value="{{ email }}"/>
+                                {% if err is defined %}
+                                    <small class="text-danger">{{ err }}</small>
+                                {% endif %}
+                                {% if msg is defined %}
+                                    <small class="text-info">{{ msg }}</small>
+                                {% endif %}
                             </div>
                             <button type="submit" class="btn btn-primary">Recover</button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

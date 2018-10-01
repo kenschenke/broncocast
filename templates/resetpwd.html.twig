@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <h1 class="display-4">BroncoCast</h1>
+                    <p class="lead">
+                        Welcome! BroncoCast is an email and text broadcast service. FIRST Robotics Team 1987, The Broncobots,
+                        needed an easy way to reach out to students, parents, and adult mentors with important information and
+                        announcements. Please click Learn more to read more about BroncoCast and how your organization can utilize it.
+                    </p>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Reset Password
+                    </div>
+                    <div class="card-body">
+                        <form name="pwdreset" action="{{ path("auth_recover_updatepwd") }}" method="post" role="form">
+                            <div class="form">
+                                <input type="hidden" name="resetstr" value="{{ resetStr }}"/>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input id="password1" type="password" class="form-control" name="password1"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <input id="password2" type="password" class="form-control" name="password2"/>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="onSubmit()">Save Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            $("#password1").focus();
+        });
+
+        function onSubmit() {
+            var pwd1 = $("#password1").val().trim();
+            var pwd2 = $("#password2").val().trim();
+
+            if (pwd1 !== pwd2) {
+                alert('The passwords do not match');
+                return;
+            }
+
+            document.forms.pwdreset.submit();
+        }
+    </script>
+{% endblock %}
