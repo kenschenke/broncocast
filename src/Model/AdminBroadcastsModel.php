@@ -269,7 +269,8 @@ class AdminBroadcastsModel
 
                 $Scheduled = new \DateTime($ScheduledParam, new \DateTimeZone($TimeZone));
                 $Scheduled->setTimezone(new \DateTimeZone('UTC'));
-                $Time = $Scheduled;
+                $Time = new \DateTime();
+                $Time->setTimestamp($Scheduled->getTimestamp() + $Scheduled->getOffset());
             } else {
                 $Scheduled = null;
                 $Time = new \DateTime();
