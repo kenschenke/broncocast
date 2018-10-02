@@ -91,4 +91,12 @@ class Purge
             closedir($dir);
         }
     }
+
+    public function PurgeSmsLogs()
+    {
+        $this->em->getConnection()->executeQuery(
+            'DELETE FROM sms_logs WHERE ' .
+            'created < DATE_SUB(CURDATE(),INTERVAL 30 DAY)'
+        );
+    }
 }

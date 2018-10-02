@@ -32,6 +32,7 @@ class Periodic extends Command
     {
 //        $this->purge->PurgeBroadcasts();
 //        $this->purge->PurgeOrphanAttachments();
+//        $this->purge->PurgeSmsLogs();
 //        $this->sendBroadcast->SendBroadcasts();
     }
 }
