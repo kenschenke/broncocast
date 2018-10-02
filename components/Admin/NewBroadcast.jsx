@@ -53,7 +53,7 @@ class NewBroadcastUi extends React.Component {
                     <li className="nav-item">
                         <a href="#" onClick={e => this.tabClicked(e,'schedule')} className={'nav-link' + (this.state.tabName==='schedule' ? ' active' : '')}>Schedule</a>
                     </li>
-                    <li className="nav-item">
+                    <li className="nav-item d-none d-lg-block d-xl-block">
                         <a href="#" onClick={e => this.tabClicked(e,'attachment')} className={'nav-link' + (this.state.tabName==='attachment' ? ' active' : '')}>Attachment</a>
                     </li>
                 </ul>
