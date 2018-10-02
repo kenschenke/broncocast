@@ -173,6 +173,13 @@ class ContactsModel
                 throw new \Exception('The contact information does not resemble an email or phone number');
             }
 
+            // See if another contact record with the new key already exists
+
+            $OtherContact = $this->em->getRepository('App:Contacts')->findOneBy(['contact' => $Key]);
+            if (!is_null($OtherContact) && $OtherContact->getId() !== $Contact->getId()) {
+                throw new \Exception('This email or phone number is already in use');
+            }
+
             $Contact->setContact($Key);
             $this->em->persist($Contact);
             $this->em->flush();
