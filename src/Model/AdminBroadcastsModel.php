@@ -147,6 +147,9 @@ class AdminBroadcastsModel
                         $UserId = $User->getId();
                         throw new \Exception("Organization member record not found: OrgId:${OrgId}, UserId:${UserId}");
                     }
+                    if ($OrgMember->getIsHidden()) {
+                        continue;  // don't bother if they're hidden
+                    }
 
                     $UserName = $User->getFullname();
                     $AltUsrName = $OrgMember->getAltUsrName();
