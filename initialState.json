@@ -38,7 +38,7 @@
   "admin_users": {
     "fetching": false,
     "users": [],
-    "showHidden": false,
+    "filterOn": "",
     "showNameDialog": false,
     "nameChangeMemberId": 0,
     "showRemoveDialog": false,

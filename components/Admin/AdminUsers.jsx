@@ -6,6 +6,10 @@ import { DuxTable } from 'duxtable';
 import { formatPhoneNumber } from '../../util/util';
 import { InputDialog } from '../InputDialog.jsx';
 import { DuxYesNoDialog } from 'duxpanel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import faAngleDownDown from '@fortawesome/fontawesome-free-solid/faAngleDoubleDown';
+import faAngleDownUp from '@fortawesome/fontawesome-free-solid/faAngleDoubleUp';
+import { AdminUserSmsLogs } from './AdminUserSmsLogs.jsx';
 
 class AdminUsersUi extends React.Component {
     constructor(props) {
@@ -13,7 +17,10 @@ class AdminUsersUi extends React.Component {
 
         this.state = {
             nameInitialValue: '',  // initial value for name change dialog
-            adminOrgId: 0
+            adminOrgId: 0,
+            filterShowMore: false,
+            showSmsLogs: false,
+            smsLogs: []
         };
     }
 
@@ -35,13 +42,18 @@ class AdminUsersUi extends React.Component {
         this.props.changeNameClicked(MemberId);
     };
 
+    filterRadioChanged = filter => {
+        this.props.setFilterOn(filter);
+    };
+
     getStatusText = user => {
         if (user.Hidden) {
             return 'Hidden';
         } else if (user.Approved) {
-            return 'Approved';
+            return user.HasDeliveryError ?
+                <span>Approved <span className="badge badge-danger">Delivery Problems</span></span> : 'Approved';
         } else {
-            return 'Not Approved';
+            return <span className="badge badge-warning">Not Approved</span>
         }
     };
 
@@ -58,7 +70,17 @@ class AdminUsersUi extends React.Component {
         const contacts = item.Contacts.map(contact => {
             let display = contact.Contact;
             if (display.length === 10 && display.indexOf(/[^0-9]/) === -1) {
-                display = formatPhoneNumber(display);
+                console.log(`contact.ContactId = ${contact.ContactId}, item.SmsLogs[0].ContactId = ${item.SmsLogs[0].ContactId}`);
+                if (item.SmsLogs.filter(smsLog => {
+                    return contact.ContactId === smsLog.ContactId;
+                }).length) {
+                    display = <div>
+                        {formatPhoneNumber(display)}
+                        <a className="ml-2 badge badge-danger" onClick={e => {e.preventDefault(); this.showSmsLogs(item.SmsLogs);}}>Show Delivery Problems</a>
+                    </div>
+                } else {
+                    display = formatPhoneNumber(display);
+                }
             }
             return <div key={contact.Contact} className="ml-3">{display}</div>
         });
@@ -68,12 +90,18 @@ class AdminUsersUi extends React.Component {
                 <span className="text-warning">Contact Information</span><br/>
                 {contacts}
                 <div className="mt-2">
-                    { !item.Approved &&
-                    <button type="button" className="btn btn-sm ml-2 btn-success" onClick={() => this.props.approveUser(item.MemberId)}>Approve</button>
+                    {!item.Approved &&
+                    <button type="button" className="btn btn-sm ml-2 btn-success"
+                            onClick={() => this.props.approveUser(item.MemberId)}>Approve</button>
                     }
-                    <button type="button" className="btn btn-sm ml-2" onClick={() => this.changeNameClicked(item.MemberId,item.UsrName)}>Name</button>
-                    <button type="button" className="btn btn-sm ml-2" onClick={() => this.props.hideUnhideUser(item.MemberId)}>{item.Hidden ? 'Unhide' : 'Hide'}</button>
-                    <button type="button" className="btn btn-sm btn-danger ml-2" onClick={() => this.props.removeUser(item.MemberId)}>Remove</button>
+                    <button type="button" className="btn btn-sm ml-2"
+                            onClick={() => this.changeNameClicked(item.MemberId, item.UsrName)}>Name
+                    </button>
+                    <button type="button" className="btn btn-sm ml-2"
+                            onClick={() => this.props.hideUnhideUser(item.MemberId)}>{item.Hidden ? 'Unhide' : 'Hide'}</button>
+                    <button type="button" className="btn btn-sm btn-danger ml-2"
+                            onClick={() => this.props.removeUser(item.MemberId)}>Remove
+                    </button>
                 </div>
             </div>
         );
@@ -90,6 +118,13 @@ class AdminUsersUi extends React.Component {
         } else {
             return 0;
         }
+    };
+
+    showSmsLogs = smsLogs => {
+        this.setState({
+            showSmsLogs: true,
+            smsLogs: smsLogs
+        });
     };
 
     render() {
@@ -114,6 +149,74 @@ class AdminUsersUi extends React.Component {
 
         return (
             <div>
+                <div className="container-fluid mb-2 alert alert-dark d-none d-lg-block d-xl-block">
+                    <div className="row">
+                        <div className="col mt-1">
+                            <span className="badge badge-secondary mr-2"
+                                  style={{fontSize: '1.1em'}}>{this.props.hiddenUsers}</span>
+                            <span className={this.props.unapprovedUsersClass}
+                                  style={{fontSize: '1.1em'}}>{this.props.unapprovedUsers}</span>
+                            <span className={this.props.deliveryProblemsClass}
+                                  style={{fontSize: '1.1em'}}>{this.props.deliveryProblems}</span>
+                        </div>
+                        <div className="col" style={{textAlign: 'right'}}>
+                            {!this.state.filterShowMore &&
+                            <button type="button" className="btn btn-primary"
+                                    onClick={() => this.setState({filterShowMore: true})}>
+                                Filter <FontAwesomeIcon icon={faAngleDownDown}/>
+                            </button>
+                            }
+                            {this.state.filterShowMore &&
+                            <button type="button" className="btn btn-primary"
+                                    onClick={() => this.setState({filterShowMore: false})}>
+                                Show Less <FontAwesomeIcon icon={faAngleDownUp}/>
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    {this.state.filterShowMore &&
+                    <div className="row">
+                        <div className="col">
+                            <div className="form-check">
+                                <input type="radio"
+                                       name="filter"
+                                       className="form-check-input"
+                                       defaultChecked={this.props.filterOn === 'hidehidden'}
+                                       onChange={e => this.filterRadioChanged('hidehidden')}
+                                />
+                                <label className="form-check-label">Hide hidden users</label>
+                            </div>
+                            <div className="form-check">
+                                <input type="radio"
+                                       name="filter"
+                                       className="form-check-input"
+                                       defaultChecked={this.props.filterOn === 'showhidden'}
+                                       onChange={e => this.filterRadioChanged('showhidden')}
+                                />
+                                <label className="form-check-label">Show hidden users</label>
+                            </div>
+                            <div className="form-check">
+                                <input type="radio"
+                                       name="filter"
+                                       className="form-check-input"
+                                       defaultChecked={this.props.filterOn === 'onlyunapproved'}
+                                       onChange={e => this.filterRadioChanged('onlyunapproved')}
+                                />
+                                <label className="form-check-label">Show only unapproved users</label>
+                            </div>
+                            <div className="form-check">
+                                <input type="radio"
+                                       name="filter"
+                                       className="form-check-input"
+                                       defaultChecked={this.props.filterOn === 'onlydeliveryproblems'}
+                                       onChange={e => this.filterRadioChanged('onlydeliveryproblems')}
+                                />
+                                <label className="form-check-label">Show only users with delivery problems</label>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
                 <DuxTable name="users"
                           columns={columns}
                           striped={true}
@@ -126,7 +229,6 @@ class AdminUsersUi extends React.Component {
                           selectionMode="single"
                           selectedRenderCallback={this.selectedRender}
                 />
-                <input type="checkbox" onChange={e => this.props.setHidden(e.target.checked)}/> Show Hidden Users<br/>
 
                 <InputDialog show={this.props.showChangeNameDialog}
                              title="Change User Name"
@@ -147,6 +249,11 @@ class AdminUsersUi extends React.Component {
                 >
                     Are you sure you want to remove this user?
                 </DuxYesNoDialog>
+
+                <AdminUserSmsLogs show={this.state.showSmsLogs}
+                                  smsLogs={this.state.smsLogs}
+                                  closeClicked={() => this.setState({showSmsLogs:false})}
+                />
             </div>
         );
     }
@@ -154,17 +261,23 @@ class AdminUsersUi extends React.Component {
 
 AdminUsersUi.propTypes = {
     adminOrgId: PropTypes.number.isRequired,
+    filterOn: PropTypes.string.isRequired,
     fetching: PropTypes.bool.isRequired,
     users: PropTypes.array.isRequired,
     showChangeNameDialog: PropTypes.bool.isRequired,
     showRemoveDialog: PropTypes.bool.isRequired,
+    hiddenUsers: PropTypes.string.isRequired,
+    unapprovedUsers: PropTypes.string.isRequired,
+    unapprovedUsersClass: PropTypes.string.isRequired,
+    deliveryProblems: PropTypes.string.isRequired,
+    deliveryProblemsClass: PropTypes.string.isRequired,
 
     adminOrgChanged: PropTypes.func.isRequired,
     approveUser: PropTypes.func.isRequired,
     hideUnhideUser: PropTypes.func.isRequired,
+    setFilterOn: PropTypes.func.isRequired,
     init: PropTypes.func.isRequired,
     removeUser: PropTypes.func.isRequired,
-    setHidden: PropTypes.func.isRequired,
     changeNameClicked: PropTypes.func.isRequired,
     changeNameOk: PropTypes.func.isRequired,
     changeNameCancel: PropTypes.func.isRequired,

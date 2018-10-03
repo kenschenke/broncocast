@@ -9,6 +9,14 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class AdminUsersModel
 {
+    const SmsErrors = [
+        21211,  // This phone number is invalid
+        21612,  // Cannot route to this number
+        21408,  // Cannot route to international number
+        21610,  // This number is blacklisted
+        21615,  // This number cannot receive SMS messages
+    ];
+
     private $tokenStorage;
     private $adminChecker;
     private $em;
@@ -89,49 +97,120 @@ class AdminUsersModel
             }
 
             $Users = [];
-            foreach ($org->getMembers() as $member) {
-                $user = $userRepo->find($member->getUserId());
-                if (is_null($user)) {
-                    throw new \Exception('User record not found');
-                }
-                $UserName = $user->getFullname();
-                $AltUsrName = $member->getAltUsrName();
+            $stmt = $this->em->getConnection()->executeQuery(
+                'SELECT org_members.id AS member_id, is_admin, is_approved, is_hidden, ' .
+                'user_id, alt_usr_name, fullname FROM org_members ' .
+                'JOIN users ON org_members.user_id = users.id ' .
+                'WHERE org_id = :OrgId', ['OrgId' => $OrgId]
+            );
+
+            while (($row = $stmt->fetch(\PDO::FETCH_ASSOC))) {
+                $MemberId = (int)$row['member_id'];
+                $UserId = (int)$row['user_id'];
+                $AltUsrName = $row['alt_usr_name'];
+                $UserName = $row['fullname'];
+                $IsAdmin = $row['is_admin'] ? true : false;
+                $IsApproved = $row['is_approved'] ? true : false;
+                $Hidden = $row['is_hidden'] ? true : false;
                 if (!is_null($AltUsrName) && !empty($AltUsrName))
                     $UserName = $AltUsrName;
 
-                $Groups = [];
-                foreach ($user->getGroups() as $grpMember) {
-                    $group = $groupRepo->find($grpMember->getGrpId());
-                    if (is_null($group)) {
-                        throw new \Exception('Group record not found');
-                    }
-                    if ($group->getOrgId() !== (int)$OrgId) {
-                        continue;
-                    }
-                    $Groups[] = $group->getGrpName();
-                }
-                $GroupNames = implode(', ', $Groups);
-
-                $Contacts = [];
-                foreach ($user->getContacts() as $contact) {
-                    $Contacts[] = [
-                        'Contact' => $contact->getContact(),
-                    ];
-                }
-
-                $Users[] = [
-                    'MemberId' => $member->getId(),
-                    'UsrId' => $user->getId(),
+                $Users[$UserId] = [
+                    'MemberId' => $MemberId,
                     'UsrName' => $UserName,
-                    'IsAdmin' => $member->getIsAdmin(),
-                    'Approved' => $member->getIsApproved(),
-                    'Hidden' => $member->getIsHidden(),
-                    'Groups' => $GroupNames,
-                    'Contacts' => $Contacts
+                    'IsAdmin' => $IsAdmin,
+                    'Approved' => $IsApproved,
+                    'Hidden' => $Hidden,
+                    'Contacts' => [],
+                    'Groups' => [],
+                    'SmsLogs' => [],
+                    'HasDeliveryError' => false,
                 ];
             }
 
-            return ['Success' => true, 'Users' => $Users];
+            $SmsLogs = [];
+            $stmt = $this->em->getConnection()->executeQuery(
+                'SELECT contact_id, code, message, created FROM sms_logs ORDER BY created DESC'
+            );
+            while (($row = $stmt->fetch(\PDO::FETCH_ASSOC))) {
+                $ContactId = $row['contact_id'];
+                $Code = $row['code'];
+                $Message = $row['message'];
+                $Time = new \DateTime($row['created']);
+
+                if (!array_key_exists($ContactId, $SmsLogs)) {
+                    $SmsLogs[$ContactId] = [];
+                }
+                $SmsLogs[$ContactId][] = [
+                    'Code' => $Code,
+                    'Message' => $Message,
+                    'Time' => $Time->format('m/d/Y h:i:s a')
+                ];
+            }
+
+            $stmt = $this->em->getConnection()->executeQuery(
+                'SELECT id, user_id, contact FROM contacts'
+            );
+            while (($row = $stmt->fetch(\PDO::FETCH_NUM))) {
+                $ContactId = $row[0];
+                $UserId = $row[1];
+                $Contact = $row[2];
+
+                if (array_key_exists($UserId, $Users)) {
+                    $Users[$UserId]['Contacts'][] = [
+                        'ContactId' => $ContactId,
+                        'Contact' => $Contact
+                    ];
+
+                    $HasDeliveryError = false;
+                    if (array_key_exists($ContactId, $SmsLogs)) {
+                        foreach ($SmsLogs[$ContactId] as $smsLog) {
+                            $Users[$UserId]['SmsLogs'][] = [
+                                'ContactId' => $ContactId,
+                                'Code' => $smsLog['Code'],
+                                'Message' => $smsLog['Message'],
+                                'Time' => $smsLog['Time'],
+                            ];
+                            if (in_array((int)$smsLog['Code'], self::SmsErrors)) {
+                                $HasDeliveryError = true;
+                            }
+                        }
+                    }
+                    $Users[$UserId]['HasDeliveryError'] = $HasDeliveryError;
+                }
+            }
+
+            $stmt = $this->em->getConnection()->executeQuery(
+                'SELECT user_id, grp_name FROM grp_members ' .
+                'JOIN groups ON grp_members.grp_id = groups.id ' .
+                'WHERE org_id = :OrgId', ['OrgId' => $OrgId]
+            );
+            while (($row = $stmt->fetch(\PDO::FETCH_NUM))) {
+                $UserId = $row[0];
+                $GrpName = $row[1];
+
+                if (array_key_exists($UserId, $Users)) {
+                    $Users[$UserId]['Groups'][] = $GrpName;
+                }
+            }
+
+            $UserResults = [];
+            foreach ($Users as $UserId => $User) {
+                $UserResults[] = [
+                    'MemberId' => $User['MemberId'],
+                    'UsrId' => $UserId,
+                    'UsrName' => $User['UsrName'],
+                    'IsAdmin' => $User['IsAdmin'],
+                    'Approved' => $User['Approved'],
+                    'Hidden' => $User['Hidden'],
+                    'Groups' => implode(', ', $User['Groups']),
+                    'Contacts' => $User['Contacts'],
+                    'SmsLogs' => $User['SmsLogs'],
+                    'HasDeliveryError' => $User['HasDeliveryError'],
+                ];
+            }
+
+            return ['Success' => true, 'Users' => $UserResults];
         } catch (\Exception $e) {
             return ['Success' => false, 'Error' => $e->getMessage()];
         }
