@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Entity\Contacts;
+use App\Entity\OrgMembers;
 use App\Entity\Users;
 use App\Security\PwdHelper;
 use App\Util\MessageUtil;
@@ -56,7 +57,7 @@ class AuthenticationModel
         ]));
     }
 
-    public function Register()
+    public function Register($OrgTag = null)
     {
         try {
             $request = $this->requestStack->getCurrentRequest();
@@ -92,6 +93,21 @@ class AuthenticationModel
             $this->pwdHelper->SaveUserPassword($User, $password1);
             $this->em->persist($User);
             $this->em->flush();
+
+            if (is_null($OrgTag)) {
+                $OrgTag = getenv('DEFAULT_ORG_TAG');
+            }
+            $Org = $this->em->getRepository('App:Orgs')->findOneBy(['tag' => $OrgTag]);
+            if (is_null($Org)) {
+                throw new \Exception('Unrecognized organization tag');
+            }
+            $OrgMember = new OrgMembers();
+            $OrgMember->setUser($User);
+            $OrgMember->setOrg($Org);
+            $OrgMember->setIsAdmin(false);
+            $OrgMember->setIsApproved(false);
+            $OrgMember->setIsHidden(false);
+            $this->em->persist($OrgMember);
 
             $Contact = new Contacts();
             $Contact->setUser($User);
