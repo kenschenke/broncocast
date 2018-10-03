@@ -8,6 +8,7 @@ use App\Util\Purge;
 use App\Util\SendBroadcast;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Periodic extends Command
@@ -30,12 +31,27 @@ class Periodic extends Command
     {
         $this
             ->setName('bcast:periodic')
-            ->setDescription('Periodic task to send broadcasts and other maintenance');
+            ->setDescription('Periodic task to send broadcasts and other maintenance')
+            ->addOption(
+                'purge',
+                'p',
+                InputOption::VALUE_NONE,
+                'Purge old records then exit'
+            )
+            ->addOption(
+                'send',
+                's',
+                InputOption::VALUE_NONE,
+                'Send broadcasts then exit'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $lock = new PeriodicLock();
+
+        $purgeOnly = $input->getOption('purge');
+        $sendOnly = $input->getOption('send');
 
         try {
             if ($lock->IsLocked() || $lock->Lock() === false) {
@@ -51,10 +67,14 @@ class Periodic extends Command
                 return;
             }
 
-//            $this->purge->PurgeBroadcasts();
-//            $this->purge->PurgeOrphanAttachments();
-//            $this->purge->PurgeSmsLogs();
-//            $this->sendBroadcast->SendBroadcasts();
+//            if ($purgeOnly) {
+//                $this->purgeRecords();
+//            } elseif ($sendOnly) {
+//                $this->sendBroadcast->SendBroadcasts();
+//            } else {
+//                $this->purgeRecords();
+//                $this->sendBroadcast->SendBroadcasts();
+//            }
         } catch (\Exception $e) {
             $this->messageUtil->SendEmail(
                 [getenv('ADMIN_EMAIL')],
@@ -66,5 +86,13 @@ class Periodic extends Command
 
         $lock->Unlock();
         $lock->ClearFailures();
+    }
+
+    private function purgeRecords()
+    {
+        $this->purge->PurgeBroadcasts();
+        $this->purge->PurgeOrphanAttachments();
+        $this->purge->PurgeSmsLogs();
+        $this->sendBroadcast->SendBroadcasts();
     }
 }
