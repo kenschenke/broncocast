@@ -45,7 +45,7 @@ class CopyGrpMembersCommand extends Command
 
         $conn->executeQuery(
             'DELETE FROM grp_members WHERE user_id NOT IN ' .
-            '(SELECT DISTINCT user_id FROM org_members'
+            '(SELECT DISTINCT user_id FROM org_members)'
         );
     }
 }
