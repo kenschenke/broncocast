@@ -157,3 +157,36 @@ export const removeUser = () => (dispatch, getState) => {
         }
     });
 };
+
+export const setDropUserAdmin = MemberId => (dispatch, getState) => {
+    const state = getState();
+
+    const user = state.admin_users.users.filter(user => user.MemberId === MemberId);
+    if (user.length !== 1) {
+        return;
+    }
+    const url = `/api/admin/users/admin/${MemberId}`;
+    $.ajax(url, {
+        contentType: 'application/x-www-form-urlencoded',
+        method: user[0].IsAdmin ? 'DELETE' : 'PUT',
+        success: data => {
+            if (!data.Success) {
+                alert(data.Error);
+                return;
+            }
+
+            dispatch({
+                type: C.SET_ADMIN_USERS_DATA,
+                payload: {
+                    users: state.admin_users.users.map(user => {
+                        return {
+                            ...user,
+                            IsAdmin: !user.IsAdmin
+                        };
+                    })
+                }
+            });
+        }
+    });
+};
+

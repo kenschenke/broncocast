@@ -50,8 +50,9 @@ class AdminUsersUi extends React.Component {
         if (user.Hidden) {
             return 'Hidden';
         } else if (user.Approved) {
+            const Status = 'Approved' + (user.IsAdmin ? ' (Admin)' : '');
             return user.HasDeliveryError ?
-                <span>Approved <span className="badge badge-danger">Delivery Problems</span></span> : 'Approved';
+                <span>{Status} <span className="badge badge-danger">Delivery Problems</span></span> : Status;
         } else {
             return <span className="badge badge-warning">Not Approved</span>
         }
@@ -70,7 +71,6 @@ class AdminUsersUi extends React.Component {
         const contacts = item.Contacts.map(contact => {
             let display = contact.Contact;
             if (display.length === 10 && display.indexOf(/[^0-9]/) === -1) {
-                console.log(`contact.ContactId = ${contact.ContactId}, item.SmsLogs[0].ContactId = ${item.SmsLogs[0].ContactId}`);
                 if (item.SmsLogs.filter(smsLog => {
                     return contact.ContactId === smsLog.ContactId;
                 }).length) {
@@ -99,6 +99,8 @@ class AdminUsersUi extends React.Component {
                     </button>
                     <button type="button" className="btn btn-sm ml-2"
                             onClick={() => this.props.hideUnhideUser(item.MemberId)}>{item.Hidden ? 'Unhide' : 'Hide'}</button>
+                    <button type="button" className="btn btn-sm ml-2"
+                            onClick={() => this.props.setDropAdmin(item.MemberId)}>{item.IsAdmin ? 'Drop Admin' : 'Add Admin'}</button>
                     <button type="button" className="btn btn-sm btn-danger ml-2"
                             onClick={() => this.props.removeUser(item.MemberId)}>Remove
                     </button>
@@ -275,6 +277,7 @@ AdminUsersUi.propTypes = {
     adminOrgChanged: PropTypes.func.isRequired,
     approveUser: PropTypes.func.isRequired,
     hideUnhideUser: PropTypes.func.isRequired,
+    setDropAdmin: PropTypes.func.isRequired,
     setFilterOn: PropTypes.func.isRequired,
     init: PropTypes.func.isRequired,
     removeUser: PropTypes.func.isRequired,
