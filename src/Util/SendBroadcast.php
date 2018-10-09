@@ -102,6 +102,12 @@ class SendBroadcast
         $Broadcasts = $this->em->getRepository('App:Broadcasts')->findBy(['delivered' => null]);
         foreach ($Broadcasts as $Broadcast) {
             $Scheduled = $Broadcast->getScheduled();
+            if (!is_null($Scheduled)) {
+                // Convert the scheduled time to UTC
+                $ScheduledTimestamp = $Scheduled->getTimestamp() + $Scheduled->getOffset();
+                $Scheduled->setTimezone(new \DateTimeZone('UTC'));
+                $Scheduled->setTimestamp($ScheduledTimestamp);
+            }
             if (is_null($Scheduled) || $Now > $Scheduled) {
                 $this->SendBroadcast($Broadcast);
             }

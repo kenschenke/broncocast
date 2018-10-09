@@ -37,5 +37,10 @@ class CopyRecipientsCommand extends Command
         );
         $rowCount = $stmt->rowCount();
         $output->writeln(" - $rowCount row" . ($rowCount===1?"":"s"));
+
+        $conn->executeQuery(
+            'DELETE FROM recipients WHERE user_id NOT IN ' .
+            '(SELECT DISTINCT user_id FROM org_members)'
+        );
     }
 }

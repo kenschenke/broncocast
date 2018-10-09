@@ -22,7 +22,7 @@ class AdminChecker
         $user = $this->tokenStorage->getToken()->getUser();
         foreach ($user->getOrgs() as $org) {
             // getOrgs() returns an array of OrgMember records
-            if ($org->getOrgId() === $OrgId) {
+            if ($org->getOrgId() === (int)$OrgId) {
                 return $org->getIsAdmin();
             }
         }

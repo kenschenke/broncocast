@@ -244,6 +244,28 @@ class AdminUsersModel
         }
     }
 
+    public function SetUserAdmin($MemberId, $IsAdmin)
+    {
+        try {
+            $OrgMember = $this->em->getRepository('App:OrgMembers')->find($MemberId);
+            if (is_null($OrgMember)) {
+                throw new \Exception('Member record not found');
+            }
+
+            if (!$this->adminChecker->IsAdminUser($OrgMember->getOrgId())) {
+                throw new \Exception('Administrative privileges required');
+            }
+
+            $OrgMember->setIsAdmin($IsAdmin);
+            $this->em->persist($OrgMember);
+            $this->em->flush();
+
+            return ['Success' => true];
+        } catch (\Exception $e) {
+            return ['Success' => false, 'Error' => $e->getMessage()];
+        }
+    }
+
     public function SetUserHidden($MemberId, $Hidden)
     {
         try {

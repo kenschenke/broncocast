@@ -1,5 +1,6 @@
 import C from "../../../constants";
-import { adminOrgChanged, approveUser, changeName, hideUnhideUser, removeUser } from '../../../actions/admin_users';
+import { adminOrgChanged, approveUser, changeName, hideUnhideUser,
+    removeUser, setDropUserAdmin } from '../../../actions/admin_users';
 
 export const mapAdminUsersProps = state => {
     let numHiddenUsers = 0;
@@ -117,6 +118,10 @@ export const mapAdminUsersDispatch = dispatch => {
                     removeMemberId: MemberId
                 }
             });
+        },
+
+        setDropAdmin(MemberId) {
+            dispatch(setDropUserAdmin(MemberId));
         },
 
         setFilterOn(filterOn) {

@@ -91,12 +91,11 @@ class AdminBroadcastsModel
                     $User = $recipient->getUser();
                     $UserName = $User->getFullname();
                     $OrgMember = $OrgMemberRepo->findOneBy(['orgId' => $OrgId, 'userId' => $User->getId()]);
-                    if (is_null($OrgMember)) {
-                        throw new \Exception('Member record not found');
-                    }
-                    $AltUserName = $OrgMember->getAltUsrName();
-                    if (!is_null($AltUserName) && !empty(trim($AltUserName))) {
-                        $UserName = $AltUserName;
+                    if (!is_null($OrgMember)) {
+                        $AltUserName = $OrgMember->getAltUsrName();
+                        if (!is_null($AltUserName) && !empty(trim($AltUserName))) {
+                            $UserName = $AltUserName;
+                        }
                     }
                     $Recipients[] = $UserName;
                 }

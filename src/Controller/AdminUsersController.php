@@ -31,6 +31,17 @@ class AdminUsersController extends Controller
     }
 
     /**
+     * @Route("/api/admin/users/admin/{MemberId}", name="admin_users_admin_drop", methods="DELETE")
+     * @param $MemberId
+     * @param AdminUsersModel $model
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function dropAdmin($MemberId, AdminUsersModel $model)
+    {
+        return $this->json($model->SetUserAdmin($MemberId, false));
+    }
+
+    /**
      * @Route("/api/admin/users/{OrgId}", name="admin_users_getusers", methods="GET")
      * @param $OrgId
      * @param AdminUsersModel $model
@@ -61,6 +72,17 @@ class AdminUsersController extends Controller
     public function removeUser($MemberId, AdminUsersModel $model)
     {
         return $this->json($model->RemoveUser($MemberId));
+    }
+
+    /**
+     * @Route("/api/admin/users/admin/{MemberId}", name="admin_users_admin_set", methods="PUT")
+     * @param $MemberId
+     * @param AdminUsersModel $model
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function setAdmin($MemberId, AdminUsersModel $model)
+    {
+        return $this->json($model->SetUserAdmin($MemberId, true));
     }
 
     /**

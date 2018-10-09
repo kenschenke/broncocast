@@ -42,5 +42,10 @@ class CopyGrpMembersCommand extends Command
             throw new \Exception("Unable to fetch max grpmid");
         $max_id = $id_row[0] + 1;
         $conn->query("ALTER TABLE grp_members AUTO_INCREMENT = $max_id");
+
+        $conn->executeQuery(
+            'DELETE FROM grp_members WHERE user_id NOT IN ' .
+            '(SELECT DISTINCT user_id FROM org_members)'
+        );
     }
 }
