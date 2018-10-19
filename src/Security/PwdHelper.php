@@ -4,17 +4,22 @@ namespace App\Security;
 
 use App\Entity\Users;
 use App\Util\MessageUtil;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class PwdHelper
 {
     private $messageUtil;
     private $encoder;
+    private $em;
 
-    public function __construct(MessageUtil $messageUtil, UserPasswordEncoderInterface $encoder)
+    public function __construct(MessageUtil $messageUtil, UserPasswordEncoderInterface $encoder,
+                                EntityManagerInterface $em)
     {
         $this->messageUtil = $messageUtil;
         $this->encoder = $encoder;
+        $this->em = $em;
     }
 
     /**
@@ -47,6 +52,24 @@ class PwdHelper
 
         $user->setResetStr(hash("sha256", $resetSeed));
         $user->setResetExpire($this->GetResetExpire());
+    }
+
+    public function MigratePassword(Users $user, $plainpwd)
+    {
+        // Encode the user-supplied password with SHA-1
+        $sha1 = sha1($plainpwd . $user->getSalt());
+        // Make sure it matches the user record
+        if ($sha1 !== $user->getLegacyPassword()) {
+            throw new AuthenticationException('Invalid username or password');
+        }
+        // Encode the password using bcrypt
+        $user->setSalt('');
+        $password = $this->encoder->encodePassword($user, $plainpwd);
+        // Store that in the user record
+        $user->setPassword($password);
+        $user->setLegacyPassword('');
+        $this->em->persist($user);
+        $this->em->flush();
     }
 
     public function SaveUserPassword(Users $user, $plainpwd)

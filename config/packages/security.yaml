@@ -25,11 +25,15 @@ security:
             logout:
                 path: /logout
                 target: /
+                success_handler: App\Security\LogoutSuccessHandler
             simple_form:
-                authenticator: App\Security\MigrationAuthenticator
+                authenticator: App\Security\BrowserAuthenticator
                 login_path: /auth/login
                 check_path: /auth/login_check
                 default_target_path: /main
+            guard:
+                authenticators:
+                    - App\Security\AppAuthenticator
             remember_me:
                 secret: '%env(APP_SECRET)%'
                 catch_exceptions: false

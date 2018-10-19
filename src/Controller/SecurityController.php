@@ -6,9 +6,22 @@ use App\Model\AuthenticationModel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SecurityController extends Controller
 {
+    /**
+     * @Route("/auth/isauth", name="auth_isauth", methods="GET")
+     * @param AuthorizationCheckerInterface $checker
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function isAuthAction(AuthorizationCheckerInterface $checker)
+    {
+        return $this->json([
+            'IsAuth' => $checker->isGranted('IS_AUTHENTICATED_REMEMBERED')
+        ]);
+    }
+
     /**
      * @Route("/auth/login", name="auth_login")
      * @param AuthenticationModel $model

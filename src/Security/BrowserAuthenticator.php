@@ -2,7 +2,6 @@
 
 namespace App\Security;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -12,15 +11,15 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\SimpleFormAuthenticatorInterface;
 
-class MigrationAuthenticator implements SimpleFormAuthenticatorInterface
+class BrowserAuthenticator implements SimpleFormAuthenticatorInterface
 {
     private $encoder;
-    private $em;
+    private $pwdHelper;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
+    public function __construct(UserPasswordEncoderInterface $encoder, PwdHelper $pwdHelper)
     {
         $this->encoder = $encoder;
-        $this->em = $em;
+        $this->pwdHelper = $pwdHelper;
     }
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
@@ -34,20 +33,7 @@ class MigrationAuthenticator implements SimpleFormAuthenticatorInterface
         // Check to see if the password needs to be migrated
         $password = $user->getPassword();
         if (empty($password)) {
-            // Encode the user-supplied password with SHA-1
-            $sha1 = sha1($token->getCredentials() . $user->getSalt());
-            // Make sure it matches the user record
-            if ($sha1 !== $user->getLegacyPassword()) {
-                throw new AuthenticationException('Invalid username or password');
-            }
-            // Encode the password using bcrypt
-            $user->setSalt('');
-            $password = $this->encoder->encodePassword($user, $token->getCredentials());
-            // Store that in the user record
-            $user->setPassword($password);
-            $user->setLegacyPassword('');
-            $this->em->persist($user);
-            $this->em->flush();
+            $this->pwdHelper->MigratePassword($user, $token->getCredentials());
         }
 
         $passwordValid = $this->encoder->isPasswordValid($user, $token->getCredentials());
