@@ -40,7 +40,7 @@ class ContactsController extends Controller
     }
 
     /**
-     * @Route("/api/contacts/{id}", name="contacts_put", methods="PUT")
+     * @Route("/api/contacts/{id}", name="contacts_put", methods={"PUT","POST"})
      * @param $id
      * @param ContactsModel $model
      * @return \Symfony\Component\HttpFoundation\JsonResponse

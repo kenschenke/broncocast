@@ -19,7 +19,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/api/profile", name="profile_put", methods="PUT")
+     * @Route("/api/profile", name="profile_put", methods={"PUT","POST"})
      * @param ProfileModel $model
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */

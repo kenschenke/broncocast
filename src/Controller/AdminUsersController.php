@@ -20,7 +20,7 @@ class AdminUsersController extends Controller
     }
 
     /**
-     * @Route("/api/admin/users/name/{MemberId}", name="admin_users_name", methods="PUT")
+     * @Route("/api/admin/users/name/{MemberId}", name="admin_users_name", methods={"PUT","POST"})
      * @param $MemberId
      * @param AdminUsersModel $model
      * @return \Symfony\Component\HttpFoundation\JsonResponse

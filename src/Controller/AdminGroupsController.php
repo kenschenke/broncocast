@@ -19,7 +19,7 @@ class AdminGroupsController extends Controller {
     }
 
     /**
-     * @Route("/api/admin/groups/name/{GroupId}", name="admin_groups_name", methods="PUT")
+     * @Route("/api/admin/groups/name/{GroupId}", name="admin_groups_name", methods={"PUT","POST"})
      * @param $GroupId
      * @param AdminGroupsModel $model
      * @return \Symfony\Component\HttpFoundation\JsonResponse
