@@ -47,7 +47,7 @@ class UserOrgsModel
                 $orgMember->setOrg($org);
                 $orgMember->setIsAdmin(false);
                 $orgMember->setIsApproved(false);
-                $orgMember->setIsBlocked(false);
+                $orgMember->setIsHidden(false);
                 $this->em->persist($orgMember);
                 $this->em->flush();
             }
