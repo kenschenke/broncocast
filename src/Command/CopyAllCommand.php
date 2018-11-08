@@ -25,9 +25,9 @@ class CopyAllCommand extends Command
         $this->copyTable('orgs', $input, $output);
         $this->copyTable('groups', $input, $output);
         $this->copyTable('users', $input, $output);
+        $this->copyTable('orgmembers', $input, $output);
         $this->copyTable('grpmembers', $input, $output);
         $this->copyTable('contacts', $input, $output);
-        $this->copyTable('orgmembers', $input, $output);
         $this->copyTable('broadcasts', $input, $output);
         $this->copyTable('attachments', $input, $output);
         $this->copyTable('recipients', $input, $output);
