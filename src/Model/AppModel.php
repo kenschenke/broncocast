@@ -20,7 +20,7 @@ class AppModel
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function GetAppParams()
+    public function GetAppParams($ForJavascript = true)
     {
         $IsSystemAdmin = $this->adminChecker->IsSystemAdmin();
 
@@ -44,14 +44,14 @@ class AppModel
                 $AdminOrgs[] = [
                     'OrgId' => $org->getId(),
                     'OrgName' => $org->getOrgName(),
-                    'AdminDefault' => $AdminDefault ? 'true' : 'false',
+                    'AdminDefault' => $ForJavascript ? ($AdminDefault ? 'true' : 'false') : $AdminDefault,
                     'DefaultTZ' => $org->getDefaultTz(),
                 ];
             }
         }
 
         return [
-            'IsSystemAdmin' => $IsSystemAdmin ? 'true' : 'false',
+            'IsSystemAdmin' => $ForJavascript ? ($IsSystemAdmin ? 'true' : 'false') : $IsSystemAdmin,
             'AdminOrgs' => $AdminOrgs,
         ];
     }

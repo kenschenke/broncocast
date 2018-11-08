@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Model\AppModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
@@ -14,24 +15,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 
-/*
- * TODO: find a way to force rememberme for app logins
- */
-
 class AppAuthenticator extends AbstractFormLoginAuthenticator
 {
     private $security;
     private $encoder;
     private $router;
     private $pwdHelper;
+    private $appModel;
 
     public function __construct(PwdHelper $pwdHelper, Security $security,
-                                UserPasswordEncoderInterface $encoder, RouterInterface $router)
+                                UserPasswordEncoderInterface $encoder, RouterInterface $router,
+                                AppModel $appModel)
     {
         $this->pwdHelper = $pwdHelper;
         $this->security = $security;
         $this->encoder = $encoder;
         $this->router = $router;
+        $this->appModel = $appModel;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -76,7 +76,12 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new JsonResponse(['Success' => true]);
+        $params = $this->appModel->GetAppParams(false);
+        return new JsonResponse([
+            'Success' => true,
+            'AdminOrgs' => $params['AdminOrgs'],
+            'IsSystemAdmin' => $params['IsSystemAdmin'],
+        ]);
     }
 
     public function supports(Request $request)

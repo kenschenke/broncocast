@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AuthenticationModel
@@ -23,10 +24,13 @@ class AuthenticationModel
     protected $pwdHelper;
     protected $messageUtil;
     protected $tokenStorage;
+    protected $checker;
+    protected $appModel;
 
     public function __construct(\Twig_Environment $twig, AuthenticationUtils $authenticationUtils,
                                 RequestStack $requestStack, EntityManagerInterface $em, PwdHelper $pwdHelper,
-                                MessageUtil $messageUtil, TokenStorageInterface $tokenStorage)
+                                MessageUtil $messageUtil, TokenStorageInterface $tokenStorage,
+                                AuthorizationCheckerInterface $checker, AppModel $appModel)
     {
         $this->twig = $twig;
         $this->authenticationUtils = $authenticationUtils;
@@ -35,6 +39,28 @@ class AuthenticationModel
         $this->pwdHelper = $pwdHelper;
         $this->messageUtil = $messageUtil;
         $this->tokenStorage = $tokenStorage;
+        $this->checker = $checker;
+        $this->appModel = $appModel;
+    }
+
+    public function AppAuthenticate()
+    {
+        $IsAuth = false;
+        $AdminOrgs = [];
+        $IsSystemAdmin = false;
+
+        if ($this->checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $params = $this->appModel->GetAppParams(false);
+            $IsAuth = true;
+            $AdminOrgs = $params['AdminOrgs'];
+            $IsSystemAdmin = $params['IsSystemAdmin'];
+        }
+
+        return [
+            'IsAuth' => $IsAuth,
+            'AdminOrgs' => $AdminOrgs,
+            'IsSystemAdmin' => $IsSystemAdmin,
+        ];
     }
 
     /**
