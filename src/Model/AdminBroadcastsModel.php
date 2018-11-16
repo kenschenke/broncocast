@@ -327,7 +327,7 @@ class AdminBroadcastsModel
                 'Time' => $Time->format('D M j, Y g:i a'),
                 'Timestamp' => $Time->getTimestamp(),
                 'IsDelivered' => false,
-                'UsrName' => $User->getFullname(),
+                'UsrName' => $Broadcast->getUsrName(),
                 'Recipients' => $RecipientNames,
             ];
         } catch (\Exception $e) {
