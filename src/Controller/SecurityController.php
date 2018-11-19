@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Model\AppModel;
 use App\Model\AuthenticationModel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,6 +10,26 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends Controller
 {
+    /**
+     * @Route("/api/recover/send", name="recover_send", METHODS="POST")
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function appSendRecoveryCode(AppModel $appModel)
+    {
+        return $this->json($appModel->SendRecoveryCode());
+    }
+
+    /**
+     * @Route("/api/recover/save", name="recover_save", METHODS="POST")
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function appRecoverByCode(AppModel $appModel)
+    {
+        return $this->json($appModel->RecoverUsingCode());
+    }
+
     /**
      * @Route("/auth/isauth", name="auth_isauth", methods="GET")
      * @param AuthenticationModel $model

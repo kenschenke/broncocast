@@ -136,6 +136,11 @@ class Users implements \Serializable, UserInterface, EquatableInterface
      */
     private $resetExpire;
 
+    /**
+     * @ORM\Column(type="smallint", nullable=true, unique=true)
+     */
+    private $resetCode;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
@@ -459,6 +464,18 @@ class Users implements \Serializable, UserInterface, EquatableInterface
     public function setResetExpire(?\DateTimeInterface $resetExpire): self
     {
         $this->resetExpire = $resetExpire;
+
+        return $this;
+    }
+
+    public function getResetCode(): ?int
+    {
+        return $this->resetCode;
+    }
+
+    public function setResetCode(?int $resetCode): self
+    {
+        $this->resetCode = $resetCode;
 
         return $this;
     }

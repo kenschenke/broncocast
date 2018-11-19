@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Model\AppModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -13,9 +14,9 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-class AppAuthenticator extends AbstractFormLoginAuthenticator
+class AppAuthenticator extends AbstractGuardAuthenticator
 {
     private $security;
     private $encoder;
@@ -42,7 +43,11 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator
             $this->pwdHelper->MigratePassword($user, $credentials['password']);
         }
 
-        return $this->encoder->isPasswordValid($user, $credentials['password']);
+        if (!$this->encoder->isPasswordValid($user, $credentials['password'])) {
+            throw new AuthenticationException('Invalid username or password');
+        }
+
+        return true;
     }
 
     public function getCredentials(Request $request)
@@ -74,6 +79,13 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator
         return new JsonResponse(['Success' => false, 'Error' => $exception->getMessage()]);
     }
 
+    /*
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        return new JsonResponse(['Success' => false, 'Error' => $exception->getMessage()]);
+    }
+    */
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $params = $this->appModel->GetAppParams(false);
@@ -93,5 +105,17 @@ class AppAuthenticator extends AbstractFormLoginAuthenticator
 
         // The user is not authenticated, so the authenticator should continue
         return $request->request->has('applogin');
+    }
+
+    public function supportsRememberMe()
+    {
+        return true;
+    }
+
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        $url = $this->getLoginUrl();
+
+        return new RedirectResponse($url);
     }
 }
