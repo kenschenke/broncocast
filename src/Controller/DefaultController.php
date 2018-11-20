@@ -192,4 +192,14 @@ class DefaultController extends Controller
             return $this->redirectToRoute('auth_login');
         }
     }
+
+    /**
+     * @Route("/api/register", name="register_app", methods="POST")
+     * @param AppModel $appModel
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function registerAppAction(AppModel $appModel)
+    {
+        return $this->json($appModel->RegisterUser());
+    }
 }

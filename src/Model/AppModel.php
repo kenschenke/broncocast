@@ -2,6 +2,9 @@
 
 namespace App\Model;
 
+use App\Entity\Contacts;
+use App\Entity\OrgMembers;
+use App\Entity\Users;
 use App\Security\PwdHelper;
 use App\Util\AdminChecker;
 use App\Util\MessageUtil;
@@ -103,6 +106,121 @@ class AppModel
             $user->setResetExpire(null);
             $this->em->persist($user);
             $this->em->flush();
+
+            return ['Success' => true];
+        } catch (\Exception $e) {
+            return ['Success' => false, 'Error' => $e->getMessage()];
+        }
+    }
+
+    public function RegisterUser()
+    {
+        try {
+            $request = $this->requestStack->getCurrentRequest();
+            $contactRepo = $this->em->getRepository('App:Contacts');
+
+            if (!$request->request->has('Name')) {
+                throw new \Exception('Name parameter missing');
+            }
+            $Name = trim($request->request->get('Name'));
+            if (empty($Name)) {
+                throw new \Exception('Name cannot be empty');
+            }
+
+            if (!$request->request->has('Password')) {
+                throw new \Exception('Password parameter missing');
+            }
+            $Password = trim($request->request->get('Password'));
+            if (empty($Password)) {
+                throw new \Exception('Password cannot be empty');
+            }
+
+            $OrgTag = strtoupper(trim($request->request->get('OrgTag', '')));
+            if (empty($OrgTag)) {
+                $OrgTag = getenv('DEFAULT_ORG_TAG');
+            }
+            $Org = $this->em->getRepository('App:Orgs')->findOneBy(['tag' => $OrgTag]);
+            if (is_null($Org)) {
+                throw new \Exception('Organization tag not found');
+            }
+
+            if (!$request->request->has('Email')) {
+                throw new \Exception('Email parameter missing');
+            }
+            $Email = strtolower(trim($request->request->get('Email')));
+            if (empty($Email)) {
+                throw new \Exception('Email address cannot be empty');
+            }
+            if (!$this->messageUtil->IsEmail($Email)) {
+                throw new \Exception('Invalid email address');
+            }
+            $Contact = $contactRepo->findOneBy(['contact' => $Email]);
+            if (!is_null($Contact)) {
+                throw new \Exception('An account with that email address already exists');
+            }
+
+            if (!$request->request->has('Phone')) {
+                throw new \Exception('Phone parameter missing');
+            }
+            $Phone = trim($request->request->get('Phone'));
+            if (!empty($Phone)) {
+                if (!$this->messageUtil->IsPhone($Phone)) {
+                    throw new \Exception('Invalid phone number');
+                }
+                $Contact = $contactRepo->findOneBy(['contact' => $Phone]);
+                if (!is_null($Contact)) {
+                    throw new \Exception('An account with that phone number already exists');
+                }
+            }
+
+            $User = new Users();
+            $User->setFullname($Name);
+            $User->setLegacyPassword('');
+            $User->setSalt('');
+            $User->setIsActive(true);
+            $User->setSingleMsg(false);
+            $this->pwdHelper->SaveUserPassword($User, $Password);
+            $this->em->persist($User);
+            $this->em->flush();
+
+            $OrgMember = new OrgMembers();
+            $OrgMember->setUser($User);
+            $OrgMember->setOrg($Org);
+            $OrgMember->setIsAdmin(false);
+            $OrgMember->setIsApproved(false);
+            $OrgMember->setIsHidden(false);
+            $this->em->persist($OrgMember);
+
+            $Contact = new Contacts();
+            $Contact->setUser($User);
+            $Contact->setContact($Email);
+            $this->em->persist($Contact);
+            $this->em->flush();
+
+            if (!empty($Phone)) {
+                $Contact = new Contacts();
+                $Contact->setUser($User);
+                $Contact->setContact($Phone);
+                $this->em->persist($Contact);
+                $this->em->flush();
+                $PhoneContactId = $Contact->getId();
+            } else {
+                $PhoneContactId = 0;
+            }
+
+            $this->messageUtil->SendEmail([$Email],
+                "Welcome to Broncocast!\n\n" .
+                "Your profile is configured to send all Broadcasts to your email " .
+                "and phone (if provided).  If you would prefer to receive only one " .
+                "message to your email or your phone, you can change this in your " .
+                "profile on the Broncocast web site or the app.",
+                null, null, null);
+
+            if ($PhoneContactId) {
+                $this->messageUtil->SendSMS([['Phone' => $Phone, 'ContactId' => $PhoneContactId]],
+                    "Welcome to Broncocast! Text HELP for instructions or STOP " .
+                    "to unsubscribe to text messages. Message and data rates may apply.");
+            }
 
             return ['Success' => true];
         } catch (\Exception $e) {
