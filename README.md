@@ -10,7 +10,7 @@ in PHP on the server (using the [Symfony](http://www.symfony.com) framework),
 and React.js for the client.
 
 Email messages are sent using [MailGun](http://www.mailgun.com), a low-cost
-email delivery service.  If your volume is low, the setvice is free.  SMS
+email delivery service.  If your volume is low, the service is free.  SMS
 text messages are sent using [Twilio](http://www.twilio.com), a low-cost
 SMS delivery service.
 
@@ -31,7 +31,7 @@ SMS delivery service.
 7. Sign up for an account on [Twilio](http://www.twilio.com).
 8. Configure Symfony environment variables (see below)
 9. Copy the server and client files to your web server.
-9. Set up the database tables
+9. Set up the database tables (see below)
 10. Configure your web server
 11. Configure the periodic cron job on your web server (see below)
 
@@ -87,3 +87,18 @@ While running, it creates a lock file to prevent more than one instance from
 running at a time.  If multiple consecutive attempts are made to run the job
 while the lock file is present, the admin will receive an email and no
 further attempts will be made to run the job or notify the admin of a problem.
+
+The cron job needs to run this PHP command periodically:
+
+`php bin/console bcast:periodic`
+
+The command recognizes two optional arguments.
+
+| Argument      | Description                             |
+| ------------- | --------------------------------------- |
+| -s or --send  | Send pending broadcasts then exit.      |
+| -p or --purge | Purge stale database records then exit. |
+
+If no arguments are given, the period command sends pending broadcasts
+and performs database maintenance.  It is not necessary to run the
+database maintenance more than once a day or every few days.
