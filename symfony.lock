@@ -95,6 +95,9 @@
             "ref": "d3188b6cdc58f877ef2884b55ac4798640b4b9be"
         }
     },
+    "mikey179/vfsstream": {
+        "version": "v1.6.5"
+    },
     "monolog/monolog": {
         "version": "1.23.0"
     },

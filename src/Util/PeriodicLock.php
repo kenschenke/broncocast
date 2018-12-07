@@ -19,6 +19,10 @@ class PeriodicLock
     {
         $this->hasLock = false;
         $this->lockDir = getenv('PERIODIC_LOCK_DIR');
+        if ($this->lockDir == false || empty($this->lockDir)) {
+            throw new \Exception('PERIODIC_LOCK_DIR environment variable missing');
+        }
+
         $this->lockFilename = "{$this->lockDir}/lockfile";
     }
 
