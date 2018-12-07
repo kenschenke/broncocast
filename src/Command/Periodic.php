@@ -67,14 +67,14 @@ class Periodic extends Command
                 return;
             }
 
-//            if ($purgeOnly) {
-//                $this->purgeRecords();
-//            } elseif ($sendOnly) {
-//                $this->sendBroadcast->SendBroadcasts();
-//            } else {
-//                $this->purgeRecords();
-//                $this->sendBroadcast->SendBroadcasts();
-//            }
+            if ($purgeOnly) {
+                $this->purgeRecords();
+            } elseif ($sendOnly) {
+                $this->sendBroadcast->SendBroadcasts();
+            } else {
+                $this->purgeRecords();
+                $this->sendBroadcast->SendBroadcasts();
+            }
         } catch (\Exception $e) {
             $this->messageUtil->SendEmail(
                 [getenv('ADMIN_EMAIL')],
@@ -93,6 +93,5 @@ class Periodic extends Command
         $this->purge->PurgeBroadcasts();
         $this->purge->PurgeOrphanAttachments();
         $this->purge->PurgeSmsLogs();
-        $this->sendBroadcast->SendBroadcasts();
     }
 }
