@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DevTools from './DevTools.jsx';
 import { mapAppProps, mapAppDispatch } from './maps/App.map';
 import { connect } from 'react-redux';
 import MenuBar from './MenuBar.jsx';
@@ -46,7 +45,6 @@ class AppUi extends React.Component {
                         <Redirect from="/" to={'/' + window.InitialRoute}/>
                     </div>
                 </BrowserRouter>
-                {/*<DevTools/>*/}
             </div>
         );
     }
