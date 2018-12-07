@@ -54,6 +54,11 @@ export const getTimezones = () => dispatch => {
 export const saveNewBroadcast = () => (dispatch, getState) => {
     const state = getState();
 
+    dispatch({
+        type: C.SET_ADMIN_NEWBROADCAST_DATA,
+        payload: { savingNewBroadcast: true }
+    });
+
     let params = {
         ShortMsg: getFormFieldValue(state, 'broadcastmessage', 'shortmsg', ''),
         LongMsg: getFormFieldValue(state, 'broadcastmessage', 'longmsg', ''),
@@ -70,6 +75,11 @@ export const saveNewBroadcast = () => (dispatch, getState) => {
         contentType: 'application/x-www-form-urlencoded',
         data: params,
         success: data => {
+            dispatch({
+                type: C.SET_ADMIN_NEWBROADCAST_DATA,
+                payload: { savingNewBroadcast: false }
+            });
+
             if (!data.Success) {
                 alert(data.Error);
                 return;

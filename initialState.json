@@ -63,6 +63,7 @@
   },
   "admin_newbroadcast": {
     "show": false,
+    "savingNewBroadcast": false,
     "fetchingGroups": false,
     "uploadingAttachment": false,
     "attachmentSuccess": false,

@@ -20,7 +20,17 @@ export const mapAdminBroadcastsDispatch = dispatch => {
             dispatch({
                 type: C.SET_ADMIN_NEWBROADCAST_DATA,
                 payload: {
-                    show: true
+                    show: true,
+                    savingNewBroadcast: false,
+                    fetchingGroups: false,
+                    uploadingAttachment: false,
+                    attachmentSuccess: false,
+                    attachmentFriendlyName: '',
+                    attachmentLocalName: '',
+                    attachmentMimeType: '',
+                    groups: {},
+                    selected: [],
+                    timezones: []
                 }
             });
         }

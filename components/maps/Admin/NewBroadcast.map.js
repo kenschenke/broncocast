@@ -17,6 +17,7 @@ export const mapNewBroadcastProps = state => {
 
     return {
         isBroadcastValid: valid,
+        saving: state.admin_newbroadcast.savingNewBroadcast,
         validMsg: validMsg
     };
 };
