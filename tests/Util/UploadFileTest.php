@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Util;
+namespace App\Tests\Util;
 
+use App\Util\UploadFile;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
