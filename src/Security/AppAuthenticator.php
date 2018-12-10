@@ -7,29 +7,29 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class AppAuthenticator extends AbstractGuardAuthenticator
 {
-    private $security;
+    private $tokenStorage;
     private $encoder;
     private $router;
     private $pwdHelper;
     private $appModel;
 
-    public function __construct(PwdHelper $pwdHelper, Security $security,
+    public function __construct(PwdHelper $pwdHelper, TokenStorageInterface $tokenStorage,
                                 UserPasswordEncoderInterface $encoder, RouterInterface $router,
                                 AppModel $appModel)
     {
         $this->pwdHelper = $pwdHelper;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
         $this->encoder = $encoder;
         $this->router = $router;
         $this->appModel = $appModel;
@@ -99,7 +99,7 @@ class AppAuthenticator extends AbstractGuardAuthenticator
     public function supports(Request $request)
     {
         // If the user is already authenticated, don't need to do it again
-        if ($this->security->getUser()) {
+        if ($this->tokenStorage->getToken()->getUser()) {
             return false;
         }
 
