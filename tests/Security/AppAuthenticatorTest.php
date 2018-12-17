@@ -4,7 +4,6 @@ namespace App\Tests\Security;
 
 use App\Security\AppAuthenticator;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class AppAuthenticatorTest extends TestCase
