@@ -42,6 +42,32 @@ class AdminBroadcastsModel
         $this->uploadFile->addPermittedType('image/webp');
     }
 
+    public function CancelBroadcast($BroadcastId)
+    {
+        try {
+            $Broadcast = $this->em->getRepository('App:Broadcasts')->find($BroadcastId);
+            if (is_null($Broadcast)) {
+                throw new \Exception('Broadcast record not found');
+            }
+
+            if (!$this->adminChecker->IsAdminUser($Broadcast->getOrgId())) {
+                throw new \Exception('Administrative privileges required');
+            }
+
+            if (!is_null($Broadcast->getDelivered())) {
+                throw new \Exception('Broadcast already delivered');
+            }
+
+            $Broadcast->setCancelled(true);
+            $this->em->persist($Broadcast);
+            $this->em->flush();
+
+            return ['Success' => true];
+        } catch (\Exception $e) {
+            return ['Success' => false, 'Error' => $e->getMessage()];
+        }
+    }
+
     public function GetBroadcasts($OrgId)
     {
         try {
@@ -108,6 +134,7 @@ class AdminBroadcastsModel
                     'Time' => $Time->format('D M j, Y g:i a'),
                     'Timestamp' => $Timestamp,
                     'IsDelivered' => !is_null($Delivered),
+                    'IsCancelled' => $Broadcast->getCancelled(),
                     'UsrName' => $Broadcast->getUsrName(),
                     'AttachmentUrl' => $AttachmentUrl,
                     'Recipients' => $Recipients,
@@ -260,6 +287,11 @@ class AdminBroadcastsModel
                 throw new \Exception('LongMsg parameter too long');
             }
 
+            // If the short message and long message are identical, ignore the long message.
+            if ($ShortMsg === $LongMsg) {
+                $LongMsg = '';
+            }
+
             if (!empty($ScheduledParam)) {
                 if (empty($TimeZone)) {
                     throw new \Exception('Missing TimeZone parameter');
@@ -283,6 +315,7 @@ class AdminBroadcastsModel
             $Broadcast->setOrg($Org);
             $Broadcast->setUsrName($User->getFullname());
             $Broadcast->setShortMsg($ShortMsg);
+            $Broadcast->setCancelled(false);
             if (!empty($LongMsg)) {
                 $Broadcast->setLongMsg($LongMsg);
             }

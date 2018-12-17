@@ -104,6 +104,7 @@ export const saveNewBroadcast = () => (dispatch, getState) => {
                             Time: data.Time,
                             Timestamp: data.Timestamp,
                             IsDelivered: data.IsDelivered,
+                            IsCancelled: false,
                             UsrName: data.UsrName,
                             AttachmentUrl: '',
                             Recipients: data.Recipients,

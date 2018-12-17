@@ -1,5 +1,5 @@
 import C from '../../../constants';
-import { adminOrgChanged } from '../../../actions/admin_broadcasts';
+import { adminOrgChanged, cancelBroadcast } from '../../../actions/admin_broadcasts';
 
 export const mapAdminBroadcastsProps = state => {
     return {
@@ -14,6 +14,10 @@ export const mapAdminBroadcastsDispatch = dispatch => {
     return {
         adminOrgChanged() {
             dispatch(adminOrgChanged());
+        },
+
+        cancelBroadcastClicked(broadcastId) {
+            dispatch(cancelBroadcast(broadcastId));
         },
 
         newBroadcastClicked() {

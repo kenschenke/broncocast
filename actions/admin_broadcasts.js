@@ -15,6 +15,32 @@ export const adminOrgChanged = () => (dispatch, getState) => {
     dispatch(getBroadcasts(state.admin_org.orgId));
 };
 
+export const cancelBroadcast = broadcastId => (dispatch, getState) => {
+    const state = getState();
+
+    $.ajax(`/api/admin/broadcasts/cancel/${broadcastId}`, {
+        method: 'POST',
+        success: data => {
+            if (!data.Success) {
+                alert(data.Error);
+                return;
+            }
+
+            dispatch({
+                type: C.SET_ADMIN_BROADCASTS_DATA,
+                payload: {
+                    broadcasts: state.admin_broadcasts.broadcasts.map(broadcast => {
+                        return {
+                            ...broadcast,
+                            IsCancelled: broadcastId === broadcast.BroadcastId ? true : broadcast.IsCancelled
+                        };
+                    })
+                }
+            });
+        }
+    });
+};
+
 export const getBroadcasts = () => (dispatch, getState) => {
     const state = getState();
     dispatch({

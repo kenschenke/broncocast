@@ -33,6 +33,11 @@ class AdminBroadcastsUi extends React.Component {
         }
     }
 
+    cancelBroadcast = (event, broadcastId) => {
+        event.preventDefault();
+        this.props.cancelBroadcastClicked(broadcastId);
+    };
+
     selectedRowRender = (item, colNum) => {
         if (colNum === 3) {
             return (
@@ -41,12 +46,25 @@ class AdminBroadcastsUi extends React.Component {
                         {item.ShortMsg}
                     </div>
                     <div className="float-right">
+                        { !item.IsDelivered && !item.IsCancelled &&
+                        <a href="#" className="text-light" onClick={e => this.cancelBroadcast(e, item.BroadcastId)}>
+                            <span className="badge badge-light mr-2">Cancel</span>
+                        </a>
+                        }
                         <a href="#" className="text-light" onClick={e => this.viewBroadcast(e, item)}>
                             <span className="badge badge-light">View</span>
                         </a>
                     </div>
                 </div>
             );
+        }
+    };
+
+    statusText = item => {
+        if (item.IsCancelled) {
+            return 'Cancelled';
+        } else {
+            return item.IsDelivered ? 'Delivered' : 'Scheduled'
         }
     };
 
@@ -86,7 +104,7 @@ class AdminBroadcastsUi extends React.Component {
             },
             {
                 title: 'Status',
-                render: item => item.IsDelivered ? 'Delivered' : 'Scheduled',
+                render: this.statusText,
                 sortable: false,
                 hidden: {
                     xs: true,
@@ -149,6 +167,7 @@ AdminBroadcastsUi.propTypes = {
     showNewBroadcast: PropTypes.bool.isRequired,
 
     adminOrgChanged: PropTypes.func.isRequired,
+    cancelBroadcastClicked: PropTypes.func.isRequired,
     newBroadcastClicked: PropTypes.func.isRequired
 };
 

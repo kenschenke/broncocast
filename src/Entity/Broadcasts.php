@@ -85,6 +85,11 @@ class Broadcasts
      */
     private $delivered;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $cancelled;
+
     public function __construct()
     {
         $this->attachments = new ArrayCollection();
@@ -295,6 +300,18 @@ class Broadcasts
     public function setDelivered(?\DateTimeInterface $delivered): self
     {
         $this->delivered = $delivered;
+
+        return $this;
+    }
+
+    public function getCancelled(): ?bool
+    {
+        return $this->cancelled;
+    }
+
+    public function setCancelled(bool $cancelled): self
+    {
+        $this->cancelled = $cancelled;
 
         return $this;
     }

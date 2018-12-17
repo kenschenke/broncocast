@@ -9,6 +9,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminBroadcastsController extends Controller
 {
     /**
+     * @Route("/api/admin/broadcasts/cancel/{BroadcastId}", name="admin_broadcasts_cancel", METHODS="POST")
+     * @param $BroadcastId
+     * @param AdminBroadcastsModel $model
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function cancelBroadcast($BroadcastId, AdminBroadcastsModel $model)
+    {
+        return $this->json($model->CancelBroadcast($BroadcastId));
+    }
+
+    /**
      * @Route("/api/admin/broadcasts/{OrgId}", name="admin_broadcasts_get", methods="GET")
      * @param $OrgId
      * @param AdminBroadcastsModel $model

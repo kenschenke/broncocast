@@ -31,7 +31,7 @@ class MyBroadcastsModel
             foreach ($User->getBroadcasts() as $Recip) {
                 $Broadcast = $Recip->getBroadcast();
                 $Delivered = $Broadcast->getDelivered();
-                if (is_null($Delivered)) {
+                if (is_null($Delivered) || $Broadcast->getCancelled()) {
                     continue;
                 }
 

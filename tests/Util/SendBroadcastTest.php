@@ -4,7 +4,6 @@ namespace App\Tests\Util;
 
 use App\Util\SendBroadcast;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SendBroadcastTest extends TestCase
@@ -17,7 +16,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -67,7 +66,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -112,7 +111,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -152,7 +151,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -257,7 +256,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -368,7 +367,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -468,7 +467,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -570,7 +569,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -689,7 +688,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -809,7 +808,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -921,7 +920,7 @@ class SendBroadcastTest extends TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findBy')
-            ->with($this->equalTo(['delivered' => null]))
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
