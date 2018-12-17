@@ -99,7 +99,8 @@ class AppAuthenticator extends AbstractGuardAuthenticator
     public function supports(Request $request)
     {
         // If the user is already authenticated, don't need to do it again
-        if ($this->tokenStorage->getToken()->getUser()) {
+        $token = $this->tokenStorage->getToken();
+        if ($token && $token->getUser()) {
             return false;
         }
 
