@@ -43,6 +43,7 @@ class NewBroadcastUi extends React.Component {
                          statusMsg={this.props.saving ? 'Saving new broadcast.' : ''}
                          statusMsgClassName="ml-3 text-muted"
                          okDisabled={this.props.saving}
+                         allowEnter={false}
                          width={{
                              xs: '95%',
                              md: '50%'
