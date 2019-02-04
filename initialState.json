@@ -85,5 +85,11 @@
     "editingTag": "",
     "showEditDialog": false,
     "showDeleteDialog": false
+  },
+  "system_users": {
+    "users": [],
+    "fetching": false,
+    "showDeleteDialog": false,
+    "deleteUserId": 0
   }
 }

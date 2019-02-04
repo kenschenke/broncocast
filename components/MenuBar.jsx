@@ -62,6 +62,7 @@ class MenuBarUi extends React.Component {
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup={true} aria-expanded={false}>System</a>
                             <div className="dropdown-menu">
                                 <Link className="dropdown-item" to="/system/orgs">Organizations</Link>
+                                <Link className="dropdown-item" to="/system/users">Users</Link>
                             </div>
                         </div>
                         }
