@@ -137,11 +137,11 @@ class AppModel
 
             $OrgTag = strtoupper(trim($request->request->get('OrgTag', '')));
             if (empty($OrgTag)) {
-                $OrgTag = getenv('DEFAULT_ORG_TAG');
+                throw new \Exception('Invite code cannot be empty');
             }
             $Org = $this->em->getRepository('App:Orgs')->findOneBy(['tag' => $OrgTag]);
             if (is_null($Org)) {
-                throw new \Exception('Organization tag not found');
+                throw new \Exception('Invite code not recognized');
             }
 
             if (!$request->request->has('Email')) {
@@ -194,6 +194,7 @@ class AppModel
             $Contact = new Contacts();
             $Contact->setUser($User);
             $Contact->setContact($Email);
+            $Contact->setContactType(Contacts::TYPE_EMAIL);
             $this->em->persist($Contact);
             $this->em->flush();
 
@@ -201,6 +202,7 @@ class AppModel
                 $Contact = new Contacts();
                 $Contact->setUser($User);
                 $Contact->setContact($Phone);
+                $Contact->setContactType(Contacts::TYPE_PHONE);
                 $this->em->persist($Contact);
                 $this->em->flush();
                 $PhoneContactId = $Contact->getId();
@@ -208,23 +210,43 @@ class AppModel
                 $PhoneContactId = 0;
             }
 
-            $this->messageUtil->SendEmail([$Email],
-                "Welcome to Broncocast!\n\n" .
-                "Your profile is configured to send all Broadcasts to your email " .
-                "and phone (if provided).  If you would prefer to receive only one " .
-                "message to your email or your phone, you can change this in your " .
-                "profile on the Broncocast web site or the app.",
-                null, null, null);
+            if ($OrgTag !== 'APPREVIEW') {
+                $this->messageUtil->SendEmail([$Email],
+                    "Welcome to Broncocast!\n\n" .
+                    "Your profile is configured to send all Broadcasts to your email " .
+                    "and phone (if provided).  If you would prefer to receive only one " .
+                    "message to your email or your phone, you can change this in your " .
+                    "profile on the Broncocast web site or the app.",
+                    null, null, null);
 
-            if ($PhoneContactId) {
-                $this->messageUtil->SendSMS([['Phone' => $Phone, 'ContactId' => $PhoneContactId]],
-                    "Welcome to Broncocast! Text HELP for instructions or STOP " .
-                    "to unsubscribe to text messages. Message and data rates may apply.");
+                if ($PhoneContactId) {
+                    $this->messageUtil->SendSMS([['Phone' => $Phone, 'ContactId' => $PhoneContactId]],
+                        "Welcome to Broncocast! Text HELP for instructions or STOP " .
+                        "to unsubscribe to text messages. Message and data rates may apply.");
+                }
             }
 
             return ['Success' => true];
         } catch (\Exception $e) {
             return ['Success' => false, 'Error' => $e->getMessage()];
+        }
+    }
+
+    public function SaveDeviceToken($Token, $DeviceType)
+    {
+        try {
+            $repo = $this->em->getRepository('App:Contacts');
+            $contact = $repo->findOneBy(['contact' => $Token]);
+            if (is_null($contact)) {
+                $contact = new Contacts();
+                $contact->setContact($Token);
+                $contact->setContactType($DeviceType);
+                $contact->setUser($this->tokenStorage->getToken()->getUser());
+                $this->em->persist($contact);
+                $this->em->flush();
+            }
+        } catch (\Exception $e) {
+            return;
         }
     }
 

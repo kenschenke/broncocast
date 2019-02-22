@@ -4,6 +4,8 @@ namespace App\Util;
 
 use App\Entity\Attachments;
 use App\Entity\Broadcasts;
+use App\Entity\Contacts;
+use App\Entity\Orgs;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SendBroadcast
@@ -25,6 +27,7 @@ class SendBroadcast
         $TextContent = '';  // content of SMS message
         $EmailRecips = []; // array of email addresses
         $EmailContent = '';  // content of email message body
+        $AppleRecips = [];  // array of Apple device tokens and contact IDs
 
         $ShortMsg = $Broadcast->getShortMsg();
         $LongMsg = $Broadcast->getLongMsg();
@@ -45,19 +48,45 @@ class SendBroadcast
                 $Force = empty($LongMsg) && $Attachments->isEmpty() ? 'short' : 'long';
             }
 
+            // Keep track of the user's phone numbers and the number of
+            // device tokens in their account.  This is to avoid sending
+            // them both an SMS text and a push notification.
+
+            $UserPhones = [];
+            $UserAppleDevices = 0;
+
             foreach ($User->getContacts() as $Contact) {
                 $ContactStr = $Contact->getContact();
-                if ($this->messageUtil->IsEmail($ContactStr)) {
+                $ContactType = $Contact->getContactType();
+                if ($ContactType === Contacts::TYPE_EMAIL) {
                     if ($Force === 'none' || $Force === 'long') {
                         $EmailRecips[] = $ContactStr;
+                        $UserEmails[] = $ContactStr;
                     }
-                } elseif ($this->messageUtil->IsPhone($ContactStr)) {
+                } elseif ($ContactType === Contacts::TYPE_PHONE) {
                     if ($Force === 'none' || $Force === 'short') {
-                        $PhoneRecips[] = [
+                        $UserPhones[] = [
                             'ContactId' => $Contact->getId(),
                             'Phone' => $ContactStr,
                         ];
                     }
+                } elseif ($ContactType === Contacts::TYPE_APPLE) {
+                    if ($Force === 'none' || $Force === 'short') {
+                        $AppleRecips[] = [
+                            'ContactId' => $Contact->getId(),
+                            'DeviceToken' => $ContactStr,
+                        ];
+                        $UserAppleDevices++;
+                    }
+                }
+            }
+
+            // If the user has no Apple device tokens in their account,
+            // send the broadcast as SMS texts.
+
+            if ($UserAppleDevices === 0) {
+                foreach ($UserPhones as $phone) {
+                    $PhoneRecips[] = $phone;
                 }
             }
         }
@@ -86,6 +115,18 @@ class SendBroadcast
             $this->messageUtil->SendSMS($PhoneRecips, $TextContent);
         }
 
+        // Send the Apple push notifications
+
+        if (!empty($AppleRecips)) {
+            $deviceTokens = [];
+            foreach ($AppleRecips as $recip) {
+                $deviceTokens[] = $recip['DeviceToken'];
+            }
+
+            $notifications = new PushNotifications();
+            $notifications->SendApplePushNotifications($deviceTokens, $TextContent, $Broadcast->getId());
+        }
+
         // Done
 
         $Broadcast->setDelivered(new \DateTime());
@@ -95,12 +136,29 @@ class SendBroadcast
 
     public function SendBroadcasts()
     {
+        // Look up the APPREVIEW org
+        /** @var Orgs $appReview */
+        $appReview = $this->em->getRepository('App:Orgs')->findOneBy(['tag' => 'APPREVIEW']);
+        if (is_null($appReview)) {
+            $appReviewOrgId = 0;
+        } else {
+            $appReviewOrgId = $appReview->getId();
+        }
+
         // Get the current date/time in UTC since scheduled dates for
         // broadcasts are stored in UTC
         $Now = new \DateTime();
         $Now->setTimezone(new \DateTimeZone('UTC'));
         $Broadcasts = $this->em->getRepository('App:Broadcasts')->findBy(['delivered' => null, 'cancelled' => false]);
+        /** @var Broadcasts $Broadcast */
         foreach ($Broadcasts as $Broadcast) {
+            if ($Broadcast->getOrgId() === $appReviewOrgId) {
+                $Broadcast->setDelivered(new \DateTime());
+                $this->em->persist($Broadcast);
+                $this->em->flush();
+                continue;
+            }
+
             $Scheduled = $Broadcast->getScheduled();
             if (!is_null($Scheduled)) {
                 // Convert the scheduled time to UTC

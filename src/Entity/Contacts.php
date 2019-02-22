@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Contacts
 {
+    const TYPE_APPLE = 'APPLE';
+    const TYPE_ANDROID = 'ANDROID';
+    const TYPE_EMAIL = 'EMAIL';
+    const TYPE_PHONE = 'PHONE';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -25,7 +30,7 @@ class Contacts
     private $userId;
 
     /**
-     * @ORM\Column(type="string", length=50, unique=true)
+     * @ORM\Column(type="string", length=150, unique=true)
      */
     private $contact;
 
@@ -57,6 +62,11 @@ class Contacts
      * @ORM\OneToMany(targetEntity="SmsLogs", mappedBy="contact")
      */
     private $smsLogs;
+
+    /**
+     * @ORM\Column(type="string", length=15)
+     */
+    private $contact_type;
 
     public function __construct()
     {
@@ -194,5 +204,17 @@ class Contacts
     public function getSmsLogs()
     {
         return $this->smsLogs;
+    }
+
+    public function getContactType(): ?string
+    {
+        return $this->contact_type;
+    }
+
+    public function setContactType(string $contact_type): self
+    {
+        $this->contact_type = $contact_type;
+
+        return $this;
     }
 }

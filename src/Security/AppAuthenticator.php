@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Contacts;
 use App\Model\AppModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -89,6 +90,13 @@ class AppAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $params = $this->appModel->GetAppParams(false);
+
+        if ($request->request->has('DeviceToken')) {
+            $Token = $request->request->get('DeviceToken');
+            $Type = $request->request->get('DeviceType', Contacts::TYPE_APPLE);
+            $this->appModel->SaveDeviceToken($Token, $Type);
+        }
+
         return new JsonResponse([
             'Success' => true,
             'AdminOrgs' => $params['AdminOrgs'],

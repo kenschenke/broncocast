@@ -50,6 +50,13 @@ class AuthenticationModel
         $IsSystemAdmin = false;
 
         if ($this->checker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request->query->has('DeviceToken')) {
+                $Token = $request->query->get('DeviceToken');
+                $Type = $request->query->get('DeviceType', Contacts::TYPE_APPLE);
+                $this->appModel->SaveDeviceToken($Token, $Type);
+            }
+
             $params = $this->appModel->GetAppParams(false);
             $IsAuth = true;
             $AdminOrgs = $params['AdminOrgs'];

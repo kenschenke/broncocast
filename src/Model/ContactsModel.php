@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Entity\Contacts;
+use App\Entity\OrgMembers;
 use App\Entity\Users;
 use App\Util\MessageUtil;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,12 +36,16 @@ class ContactsModel
             }
 
             $Key = strtolower(trim($request->request->get('Key')));
-            if (strlen($Key) > 50) {
+            if (strlen($Key) > 150) {
                 throw new \Exception('Key parameter too long');
             }
 
-            if (!$this->messageUtil->IsPhone($Key) && !$this->messageUtil->IsEmail($Key)) {
-                throw new \Exception('The new contact record does not resemble an email or phone number');
+            if ($this->messageUtil->IsPhone($Key)) {
+                $contactType = Contacts::TYPE_PHONE;
+            } elseif ($this->messageUtil->IsEmail($Key)) {
+                $contactType = Contacts::TYPE_EMAIL;
+            } else {
+                throw new \Exception('Unrecognized Contact Type');
             }
 
             // Make sure this contact record doesn't already exist
@@ -56,6 +61,7 @@ class ContactsModel
             $user = $this->tokenStorage->getToken()->getUser();
             $contact->setUser($user);
             $contact->setContact($Key);
+            $contact->setContactType($contactType);
             $this->em->persist($contact);
             $this->em->flush();
 
@@ -103,6 +109,11 @@ class ContactsModel
     {
         $results = [];
         foreach ($user->getContacts() as $contact) {
+            $contactType = $contact->getContactType();
+            if ($contactType !== Contacts::TYPE_EMAIL && $contactType !== Contacts::TYPE_PHONE) {
+                continue;
+            }
+
             $results[] = [
                 'ContactId' => $contact->getId(),
                 'Contact' => $contact->getContact(),
@@ -115,7 +126,19 @@ class ContactsModel
     public function TestContact($id)
     {
         try {
-            $UserId = $this->tokenStorage->getToken()->getUser()->getId();
+            /** @var Users $User */
+            $User = $this->tokenStorage->getToken()->getUser();
+
+            // Don't bother sending a test if the user is a member of the APPREVIEW org
+            if ($User->getOrgs()->count() === 1) {
+                /** @var OrgMembers $OrgMember */
+                $OrgMember = $User->getOrgs()[0];
+                if ($OrgMember->getOrg()->getTag() === 'APPREVIEW') {
+                    return ['Success' => false, 'Error' => 'Tests cannot be sent from this account'];
+                }
+            }
+
+            $UserId = $User->getId();
 
             $Contact = $this->em->getRepository('App:Contacts')->find($id);
             if (is_null($Contact)) {
