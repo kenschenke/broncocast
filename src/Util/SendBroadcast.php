@@ -12,11 +12,13 @@ class SendBroadcast
 {
     private $em;
     private $messageUtil;
+    private $pushNotifications;
 
-    public function __construct(EntityManagerInterface $em, MessageUtil $messageUtil)
+    public function __construct(EntityManagerInterface $em, MessageUtil $messageUtil, PushNotifications $pushNotifications)
     {
         $this->em = $em;
         $this->messageUtil = $messageUtil;
+        $this->pushNotifications = $pushNotifications;
     }
 
     private function SendBroadcast(Broadcasts $Broadcast)
@@ -123,8 +125,7 @@ class SendBroadcast
                 $deviceTokens[] = $recip['DeviceToken'];
             }
 
-            $notifications = new PushNotifications();
-            $notifications->SendApplePushNotifications($deviceTokens, $TextContent, $Broadcast->getId());
+            $this->pushNotifications->SendApplePushNotifications($deviceTokens, $TextContent, $Broadcast->getId());
         }
 
         // Done
