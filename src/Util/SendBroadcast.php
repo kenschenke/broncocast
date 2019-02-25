@@ -2,10 +2,10 @@
 
 namespace App\Util;
 
-use App\Entity\Attachments;
 use App\Entity\Broadcasts;
 use App\Entity\Contacts;
 use App\Entity\Orgs;
+use App\Entity\Recipients;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SendBroadcast
@@ -26,9 +26,7 @@ class SendBroadcast
         $Attachments = $Broadcast->getAttachments();
 
         $PhoneRecips = [];  // array of array of phone numbers and contact IDs
-        $TextContent = '';  // content of SMS message
         $EmailRecips = []; // array of email addresses
-        $EmailContent = '';  // content of email message body
         $AppleRecips = [];  // array of Apple device tokens and contact IDs
 
         $ShortMsg = $Broadcast->getShortMsg();
@@ -40,6 +38,7 @@ class SendBroadcast
         // If LongMsg is empty, email recipients get the short message.  Otherwise the long message
         $EmailContent = empty($LongMsg) ? $ShortMsg : $LongMsg;
 
+        /** @var Recipients $Recipient */
         foreach ($Broadcast->getRecipients() as $Recipient) {
             $User = $Recipient->getUser();
 
@@ -121,11 +120,21 @@ class SendBroadcast
 
         if (!empty($AppleRecips)) {
             $deviceTokens = [];
+
             foreach ($AppleRecips as $recip) {
                 $deviceTokens[] = $recip['DeviceToken'];
             }
 
-            $this->pushNotifications->SendApplePushNotifications($deviceTokens, $TextContent, $Broadcast->getId());
+            try {
+                $this->pushNotifications->SendApplePushNotifications($deviceTokens, $TextContent, $Broadcast->getId());
+            } catch (\Exception $e) {
+                $this->messageUtil->SendEmail(
+                    [getenv('ADMIN_EMAIL')],
+                    "SendApplePushNotifications() has failed with the following exception:\n\n" .
+                    $e->getMessage(),
+                    null, null, null
+                );
+            }
         }
 
         // Done

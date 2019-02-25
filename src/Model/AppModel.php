@@ -234,6 +234,10 @@ class AppModel
 
     public function SaveDeviceToken($Token, $DeviceType)
     {
+        if (empty($Token)) {
+            return;
+        }
+
         try {
             $repo = $this->em->getRepository('App:Contacts');
             $contact = $repo->findOneBy(['contact' => $Token]);

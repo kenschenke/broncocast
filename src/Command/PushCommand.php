@@ -27,7 +27,10 @@ class PushCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->notifications->SendApplePushNotifications(['a07527aa7d18d006c7dd7015048472323c074511e628746d5e09ce26657fdf6f'], 'Shop opens at 10', 0);
-//        $this->notifications->SendApplePushNotifications(['a07527aa7d18d006c7dd7015048472323c074511e628746d5e09ce26657fdf60'], 'Shop opens at 10', 0);
+        // Old device token
+//        $this->notifications->SendApplePushNotifications(['a07527aa7d18d006c7dd7015048472323c074511e628746d5e09ce26657fdf6f'], 'Shop opens at 10', 0);
+
+        // Current device token
+        $this->notifications->SendApplePushNotifications(['8e2f1b15d6393266bb7ab6d325ef32f6ec409027482306caf05d0909955dd030'], 'Shop opens at 10', 1707);
     }
 }
