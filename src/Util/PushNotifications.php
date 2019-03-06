@@ -28,7 +28,7 @@ class PushNotifications
                 $validDeviceIds[] = $id;
         }
 
-        $service = new ApnsPushService($certFile, '', PushManager::ENVIRONMENT_DEV);
+        $service = new ApnsPushService($certFile, '', PushManager::ENVIRONMENT_PROD);
         $response = $service->push($validDeviceIds, [$message], ['message' => [
             'sound' => 'default',
             'custom' => ['broadcastId' => $broadcastId],
@@ -41,8 +41,9 @@ class PushNotifications
             }
         }
 
-        $failedTokens = $service->getInvalidTokens();
-        foreach ($failedTokens as $token) {
+        $pushManager = new PushManager(PushManager::ENVIRONMENT_PROD);
+        $feedback = $pushManager->getFeedback($apnsAdapter);
+        foreach ($feedback as $token => $data) {
             $this->PurgeToken($token);
         }
     }
