@@ -2,6 +2,7 @@
 
 namespace App\Tests\Util;
 
+use App\Entity\Contacts;
 use App\Util\SendBroadcast;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -11,21 +12,31 @@ class SendBroadcastTest extends TestCase
     public function testNoBroadcasts()
     {
         $Broadcasts = new ArrayCollection();
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
@@ -33,7 +44,12 @@ class SendBroadcastTest extends TestCase
         $MessageUtil->expects($this->never())->method('SendEmail');
         $MessageUtil->expects($this->never())->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -61,21 +77,31 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast1, $Broadcast2]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
@@ -83,7 +109,12 @@ class SendBroadcastTest extends TestCase
         $MessageUtil->expects($this->never())->method('SendEmail');
         $MessageUtil->expects($this->never())->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -106,21 +137,31 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
@@ -128,7 +169,12 @@ class SendBroadcastTest extends TestCase
         $MessageUtil->expects($this->never())->method('SendEmail');
         $MessageUtil->expects($this->never())->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -146,21 +192,31 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
@@ -168,16 +224,19 @@ class SendBroadcastTest extends TestCase
         $MessageUtil->expects($this->never())->method('SendEmail');
         $MessageUtil->expects($this->never())->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
     public function testShortAndLongMessage()
     {
         $Recipients = [];
-        $EmailMap = [];
         $EmailRecips = [];
-        $PhoneMap = [];
         $PhoneRecips = [];
         $ShortMsg = 'Short Message';
         $LongMsg = 'Long Message';
@@ -191,6 +250,10 @@ class SendBroadcastTest extends TestCase
                 ->expects($this->once())
                 ->method('getContact')
                 ->will($this->returnValue($Email));
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_EMAIL));
             $EmailRecips[] = $Email;
 
             $Phone = "816555121$i";
@@ -201,6 +264,10 @@ class SendBroadcastTest extends TestCase
                 ->expects($this->once())
                 ->method('getContact')
                 ->will($this->returnValue($Phone));
+            $PhoneContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_PHONE));
             $PhoneContact
                 ->expects($this->once())
                 ->method('getId')
@@ -230,11 +297,6 @@ class SendBroadcastTest extends TestCase
                 ->method('getUser')
                 ->will($this->returnValue($User));
             $Recipients[] = $Recipient;
-
-            $EmailMap[] = [$Email, true];
-            $EmailMap[] = [$Phone, false];
-            $PhoneMap[] = [$Email, false];
-            $PhoneMap[] = [$Phone, true];
         }
 
         $Broadcast = $this->getMockBuilder('\App\Entity\Broadcasts')
@@ -251,27 +313,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -281,16 +351,19 @@ class SendBroadcastTest extends TestCase
             ->method('SendSMS')
             ->with($this->equalTo($PhoneRecips), $this->equalTo($ShortMsg));
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
     public function testShortMessageOnly()
     {
         $Recipients = [];
-        $EmailMap = [];
         $EmailRecips = [];
-        $PhoneMap = [];
         $PhoneRecips = [];
         $ShortMsg = 'Short Message';
 
@@ -303,6 +376,10 @@ class SendBroadcastTest extends TestCase
                 ->expects($this->once())
                 ->method('getContact')
                 ->will($this->returnValue($Email));
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_EMAIL));
             $EmailRecips[] = $Email;
 
             $Phone = "816555121$i";
@@ -313,6 +390,10 @@ class SendBroadcastTest extends TestCase
                 ->expects($this->once())
                 ->method('getContact')
                 ->will($this->returnValue($Phone));
+            $PhoneContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_PHONE));
             $PhoneContact
                 ->expects($this->once())
                 ->method('getId')
@@ -342,11 +423,6 @@ class SendBroadcastTest extends TestCase
                 ->method('getUser')
                 ->will($this->returnValue($User));
             $Recipients[] = $Recipient;
-
-            $EmailMap[] = [$Email, true];
-            $EmailMap[] = [$Phone, false];
-            $PhoneMap[] = [$Email, false];
-            $PhoneMap[] = [$Phone, true];
         }
 
         $Broadcast = $this->getMockBuilder('\App\Entity\Broadcasts')
@@ -362,27 +438,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -392,7 +476,12 @@ class SendBroadcastTest extends TestCase
             ->method('SendSMS')
             ->with($this->equalTo($PhoneRecips), $this->equalTo($ShortMsg));
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -410,6 +499,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Email));
+        $EmailContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_EMAIL));
 
         $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
             ->disableOriginalConstructor()
@@ -418,15 +511,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Phone));
-
-        $EmailMap = [
-            [$Email, true],
-            [$Phone, false],
-        ];
-        $PhoneMap = [
-            [$Phone, true],
-            [$Email, false],
-        ];
+        $PhoneContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_PHONE));
 
         $User = $this->getMockBuilder('\App\Entity\Users')
             ->disableOriginalConstructor()
@@ -462,27 +550,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -491,7 +587,12 @@ class SendBroadcastTest extends TestCase
             ->expects($this->never())
             ->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -509,6 +610,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Email));
+        $EmailContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_EMAIL));
 
         $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
             ->disableOriginalConstructor()
@@ -519,17 +624,12 @@ class SendBroadcastTest extends TestCase
             ->will($this->returnValue($Phone));
         $PhoneContact
             ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_PHONE));
+        $PhoneContact
+            ->expects($this->once())
             ->method('getId')
             ->will($this->returnValue($PhoneContactId));
-
-        $EmailMap = [
-            [$Email, true],
-            [$Phone, false],
-        ];
-        $PhoneMap = [
-            [$Phone, true],
-            [$Email, false],
-        ];
 
         $User = $this->getMockBuilder('\App\Entity\Users')
             ->disableOriginalConstructor()
@@ -564,27 +664,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->never())
             ->method('SendEmail');
@@ -598,7 +706,12 @@ class SendBroadcastTest extends TestCase
                 ]
             ]), $this->equalTo($ShortMsg));
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -620,6 +733,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Email));
+        $EmailContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_EMAIL));
 
         $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
             ->disableOriginalConstructor()
@@ -630,17 +747,12 @@ class SendBroadcastTest extends TestCase
             ->will($this->returnValue($Phone));
         $PhoneContact
             ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_PHONE));
+        $PhoneContact
+            ->expects($this->once())
             ->method('getId')
             ->will($this->returnValue($ContactId));
-
-        $EmailMap = [
-            [$Email, true],
-            [$Phone, false],
-        ];
-        $PhoneMap = [
-            [$Phone, true],
-            [$Email, false],
-        ];
 
         $User = $this->getMockBuilder('\App\Entity\Users')
             ->disableOriginalConstructor()
@@ -683,27 +795,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -723,7 +843,12 @@ class SendBroadcastTest extends TestCase
                 ]
             ]));
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -744,6 +869,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Email));
+        $EmailContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_EMAIL));
 
         $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
             ->disableOriginalConstructor()
@@ -752,15 +881,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Phone));
-
-        $EmailMap = [
-            [$Email, true],
-            [$Phone, false],
-        ];
-        $PhoneMap = [
-            [$Phone, true],
-            [$Email, false],
-        ];
+        $PhoneContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_PHONE));
 
         $User = $this->getMockBuilder('\App\Entity\Users')
             ->disableOriginalConstructor()
@@ -803,27 +927,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -837,7 +969,12 @@ class SendBroadcastTest extends TestCase
             ->expects($this->never())
             ->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 
@@ -857,6 +994,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Email));
+        $EmailContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_EMAIL));
 
         $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
             ->disableOriginalConstructor()
@@ -865,15 +1006,10 @@ class SendBroadcastTest extends TestCase
             ->expects($this->once())
             ->method('getContact')
             ->will($this->returnValue($Phone));
-
-        $EmailMap = [
-            [$Email, true],
-            [$Phone, false],
-        ];
-        $PhoneMap = [
-            [$Phone, true],
-            [$Email, false],
-        ];
+        $PhoneContact
+            ->expects($this->once())
+            ->method('getContactType')
+            ->will($this->returnValue(Contacts::TYPE_PHONE));
 
         $User = $this->getMockBuilder('\App\Entity\Users')
             ->disableOriginalConstructor()
@@ -915,27 +1051,35 @@ class SendBroadcastTest extends TestCase
 
         $Broadcasts = new ArrayCollection([$Broadcast]);
 
-        $repo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $broadcastsRepo->expects($this->once())
             ->method('findBy')
             ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
             ->will($this->returnValue($Broadcasts));
 
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('App:Broadcasts'))
-            ->will($this->returnValue($repo));
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
 
         $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
             ->disableOriginalConstructor()
             ->getMock();
-        $MessageUtil->method('IsEmail')->will($this->returnValueMap($EmailMap));
-        $MessageUtil->method('IsPhone')->will($this->returnValueMap($PhoneMap));
         $MessageUtil
             ->expects($this->once())
             ->method('SendEmail')
@@ -949,7 +1093,343 @@ class SendBroadcastTest extends TestCase
             ->expects($this->never())
             ->method('SendSMS');
 
-        $SendBroadcast = new SendBroadcast($em, $MessageUtil);
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications->expects($this->never())->method('SendApplePushNotifications');
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
+        $SendBroadcast->SendBroadcasts();
+    }
+
+    public function testUsersWithAppleDeviceTokens()
+    {
+        $BroadcastId = 10;
+        $Recipients = [];
+        $EmailRecips = [];
+        $PhoneRecips = [];
+        $AppleTokens = [];
+        $ShortMsg = 'Short Message';
+
+        for ($i = 1; $i < 5; $i++) {
+            $Email = "email$i@example.com";
+            $EmailContact = $this->getMockBuilder('\App\Entity\Contacts')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContact')
+                ->will($this->returnValue($Email));
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_EMAIL));
+            $EmailRecips[] = $Email;
+
+            $Contacts = [$EmailContact];
+
+            if (($i % 2) !== 0) {
+                $Token = "a1b2c3d4e5f$i";
+                $AppleContact = $this->getMockBuilder('\App\Entity\Contacts')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContact')
+                    ->will($this->returnValue($Token));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContactType')
+                    ->will($this->returnValue(Contacts::TYPE_APPLE));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getId')
+                    ->will($this->returnValue($i+5));
+                $Contacts[] = $AppleContact;
+                $AppleTokens[] = $Token;
+            } else {
+                $Phone = "816555121$i";
+                $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getContact')
+                    ->will($this->returnValue($Phone));
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getContactType')
+                    ->will($this->returnValue(Contacts::TYPE_PHONE));
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getId')
+                    ->will($this->returnValue($i+5));
+                $PhoneRecips[] = [
+                    'ContactId' => $i + 5,
+                    'Phone' => $Phone,
+                ];
+                $Contacts[] = $PhoneContact;
+            }
+
+            $User = $this->getMockBuilder('\App\Entity\Users')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $User
+                ->expects($this->once())
+                ->method('getContacts')
+                ->will($this->returnValue(new ArrayCollection($Contacts)));
+            $User
+                ->expects($this->once())
+                ->method('getSingleMsg')
+                ->will($this->returnValue(false));
+
+            $Recipient = $this->getMockBuilder('\App\Entity\Recipients')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $Recipient
+                ->expects($this->once())
+                ->method('getUser')
+                ->will($this->returnValue($User));
+            $Recipients[] = $Recipient;
+        }
+
+        $Broadcast = $this->getMockBuilder('\App\Entity\Broadcasts')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $Broadcast->expects($this->once())
+            ->method('getRecipients')
+            ->will($this->returnValue(new ArrayCollection($Recipients)));
+        $Broadcast->expects($this->once())
+            ->method('getAttachments')
+            ->will($this->returnValue(new ArrayCollection()));
+        $Broadcast->method('getShortMsg')->will($this->returnValue($ShortMsg));
+        $Broadcast->method('getId')->will($this->returnValue($BroadcastId));
+
+        $Broadcasts = new ArrayCollection([$Broadcast]);
+
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $broadcastsRepo->expects($this->once())
+            ->method('findBy')
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
+            ->will($this->returnValue($Broadcasts));
+
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
+        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
+
+        $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $MessageUtil
+            ->expects($this->once())
+            ->method('SendEmail')
+            ->with($this->equalTo($EmailRecips), $this->equalTo($ShortMsg));
+        $MessageUtil
+            ->expects($this->once())
+            ->method('SendSMS')
+            ->with($this->equalTo($PhoneRecips), $this->equalTo($ShortMsg));
+
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications
+            ->expects($this->once())
+            ->method('SendApplePushNotifications')
+            ->with($this->equalTo($AppleTokens), $this->equalTo($ShortMsg), $this->equalTo($BroadcastId));
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
+        $SendBroadcast->SendBroadcasts();
+    }
+
+    public function testUsersWithMultipleAppleDeviceTokens()
+    {
+        $BroadcastId = 10;
+        $Recipients = [];
+        $EmailRecips = [];
+        $PhoneRecips = [];
+        $AppleTokens = [];
+        $ShortMsg = 'Short Message';
+
+        for ($i = 1; $i < 5; $i++) {
+            $Email = "email$i@example.com";
+            $EmailContact = $this->getMockBuilder('\App\Entity\Contacts')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContact')
+                ->will($this->returnValue($Email));
+            $EmailContact
+                ->expects($this->once())
+                ->method('getContactType')
+                ->will($this->returnValue(Contacts::TYPE_EMAIL));
+            $EmailRecips[] = $Email;
+
+            $Contacts = [$EmailContact];
+
+            if (($i % 2) !== 0) {
+                $Token = "a1b2c3d4e5f$i";
+                $AppleContact = $this->getMockBuilder('\App\Entity\Contacts')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContact')
+                    ->will($this->returnValue($Token));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContactType')
+                    ->will($this->returnValue(Contacts::TYPE_APPLE));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getId')
+                    ->will($this->returnValue($i+5));
+                $Contacts[] = $AppleContact;
+                $AppleTokens[] = $Token;
+            } else {
+                $Phone = "816555121$i";
+                $PhoneContact = $this->getMockBuilder('\App\Entity\Contacts')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getContact')
+                    ->will($this->returnValue($Phone));
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getContactType')
+                    ->will($this->returnValue(Contacts::TYPE_PHONE));
+                $PhoneContact
+                    ->expects($this->once())
+                    ->method('getId')
+                    ->will($this->returnValue($i+5));
+                $PhoneRecips[] = [
+                    'ContactId' => $i + 5,
+                    'Phone' => $Phone,
+                ];
+                $Contacts[] = $PhoneContact;
+            }
+
+            if ($i === 3) {
+                $Token = "a1b2c3d4e5f2$i";
+                $AppleContact = $this->getMockBuilder('\App\Entity\Contacts')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContact')
+                    ->will($this->returnValue($Token));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getContactType')
+                    ->will($this->returnValue(Contacts::TYPE_APPLE));
+                $AppleContact
+                    ->expects($this->once())
+                    ->method('getId')
+                    ->will($this->returnValue($i+5));
+                $Contacts[] = $AppleContact;
+                $AppleTokens[] = $Token;
+            }
+
+            $User = $this->getMockBuilder('\App\Entity\Users')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $User
+                ->expects($this->once())
+                ->method('getContacts')
+                ->will($this->returnValue(new ArrayCollection($Contacts)));
+            $User
+                ->expects($this->once())
+                ->method('getSingleMsg')
+                ->will($this->returnValue(false));
+
+            $Recipient = $this->getMockBuilder('\App\Entity\Recipients')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $Recipient
+                ->expects($this->once())
+                ->method('getUser')
+                ->will($this->returnValue($User));
+            $Recipients[] = $Recipient;
+        }
+
+        $Broadcast = $this->getMockBuilder('\App\Entity\Broadcasts')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $Broadcast->expects($this->once())
+            ->method('getRecipients')
+            ->will($this->returnValue(new ArrayCollection($Recipients)));
+        $Broadcast->expects($this->once())
+            ->method('getAttachments')
+            ->will($this->returnValue(new ArrayCollection()));
+        $Broadcast->method('getShortMsg')->will($this->returnValue($ShortMsg));
+        $Broadcast->method('getId')->will($this->returnValue($BroadcastId));
+
+        $Broadcasts = new ArrayCollection([$Broadcast]);
+
+        $broadcastsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $broadcastsRepo->expects($this->once())
+            ->method('findBy')
+            ->with($this->equalTo(['delivered' => null, 'cancelled' => false]))
+            ->will($this->returnValue($Broadcasts));
+
+        $orgsRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $orgsRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with($this->equalTo(['tag' => 'APPREVIEW']))
+            ->will($this->returnValue(null));
+
+        $emMap = [
+            ['App:Broadcasts', $broadcastsRepo],
+            ['App:Orgs', $orgsRepo],
+        ];
+
+        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->method('getRepository')->will($this->returnValueMap($emMap));
+
+        $MessageUtil = $this->getMockBuilder('\App\Util\MessageUtil')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $MessageUtil
+            ->expects($this->once())
+            ->method('SendEmail')
+            ->with($this->equalTo($EmailRecips), $this->equalTo($ShortMsg));
+        $MessageUtil
+            ->expects($this->once())
+            ->method('SendSMS')
+            ->with($this->equalTo($PhoneRecips), $this->equalTo($ShortMsg));
+
+        $pushNotifications = $this->getMockBuilder('\App\Util\PushNotifications')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pushNotifications
+            ->expects($this->once())
+            ->method('SendApplePushNotifications')
+            ->with($this->equalTo($AppleTokens), $this->equalTo($ShortMsg), $this->equalTo($BroadcastId));
+
+        $SendBroadcast = new SendBroadcast($em, $MessageUtil, $pushNotifications);
         $SendBroadcast->SendBroadcasts();
     }
 }
