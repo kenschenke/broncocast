@@ -4,7 +4,11 @@ namespace App\Model;
 
 use App\Entity\Attachments;
 use App\Entity\Broadcasts;
+use App\Entity\Groups;
+use App\Entity\GrpMembers;
+use App\Entity\Orgs;
 use App\Entity\Recipients;
+use App\Entity\Users;
 use App\Util\AdminChecker;
 use App\Util\UploadFile;
 use App\Util\UserUtil;
@@ -81,6 +85,7 @@ class AdminBroadcastsModel
 
             $Broadcasts = [];
             $recs = $this->em->getRepository('App:Broadcasts')->findBy(['orgId' => $OrgId]);
+            /** @var Broadcasts $Broadcast */
             foreach ($recs as $Broadcast) {
                 $LongMsg = $Broadcast->getLongMsg();
                 if (is_null($LongMsg)) {
@@ -113,6 +118,7 @@ class AdminBroadcastsModel
 
                 $Recipients = [];
                 $OrgMemberRepo = $this->em->getRepository('App:OrgMembers');
+                /** @var Recipients $recipient */
                 foreach ($Broadcast->getRecipients() as $recipient) {
                     $User = $recipient->getUser();
                     $UserName = $User->getFullname();
@@ -160,9 +166,11 @@ class AdminBroadcastsModel
 
             $Groups = [];
             $GroupRecs = $this->em->getRepository('App:Groups')->findBy(['orgId' => $OrgId]);
+            /** @var Groups $Group */
             foreach ($GroupRecs as $Group) {
                 $Members = [];
                 $MemberRecs = $GrpMembersRepo->findBy(['grpId' => $Group->getId()]);
+                /** @var GrpMembers $GrpMember */
                 foreach ($MemberRecs as $GrpMember) {
                     $User = $UsersRepo->find($GrpMember->getUserId());
                     if (is_null($User)) {
@@ -258,6 +266,7 @@ class AdminBroadcastsModel
             if (!$this->adminChecker->IsAdminUser($OrgId)) {
                 throw new \Exception('Administrative privileges required');
             }
+            /** @var Orgs $Org */
             $Org = $this->em->getRepository('App:Orgs')->find($OrgId);
             if (is_null($Org)) {
                 throw new \Exception('Organization record not found');
@@ -329,6 +338,7 @@ class AdminBroadcastsModel
             $RecipientNames = [];
             $UsersRepo = $this->em->getRepository('App:Users');
             foreach ($Recipients as $UserId) {
+                /** @var Users $User */
                 $User = $UsersRepo->find($UserId);
                 if (is_null($User)) {
                     throw new \Exception('User record not found');
