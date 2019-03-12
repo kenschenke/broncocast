@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\AdminUsersModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminUsersController extends Controller
+class AdminUsersController extends AbstractController
 {
     /**
      * @Route("/api/admin/users/approve/{MemberId}", name="admin_users_approve", methods="PUT")

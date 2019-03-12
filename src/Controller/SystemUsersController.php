@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\SystemUsersModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SystemUsersController extends Controller
+class SystemUsersController extends AbstractController
 {
     /**
      * @Route("/api/system/users", name="system_users_get", methods="GET")

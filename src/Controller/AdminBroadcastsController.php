@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\AdminBroadcastsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminBroadcastsController extends Controller
+class AdminBroadcastsController extends AbstractController
 {
     /**
      * @Route("/api/admin/broadcasts/cancel/{BroadcastId}", name="admin_broadcasts_cancel", METHODS="POST")

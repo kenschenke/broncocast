@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\AdminGroupsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminGroupsController extends Controller {
+class AdminGroupsController extends AbstractController {
     /**
      * @Route("/api/admin/groups/members/{GroupId}", name="admin_groups_add_member", methods="POST")
      * @param $GroupId

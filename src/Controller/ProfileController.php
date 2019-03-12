@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\ProfileModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
     /**
      * @Route("/api/profile", name="profile_get", methods="GET")

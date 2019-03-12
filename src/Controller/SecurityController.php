@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Model\AppModel;
 use App\Model\AuthenticationModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SecurityController extends Controller
+class SecurityController extends AbstractController
 {
     /**
      * @Route("/api/recover/send", name="recover_send", METHODS="POST")

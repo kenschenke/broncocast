@@ -3,14 +3,13 @@
 namespace App\Controller;
 
 use App\Model\AppModel;
-use App\Model\MyBroadcastsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
     /**
      * @Route("/main", name="mainpage")

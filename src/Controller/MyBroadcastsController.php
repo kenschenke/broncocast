@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\MyBroadcastsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MyBroadcastsController extends Controller
+class MyBroadcastsController extends AbstractController
 {
     /**
      * @Route("/api/broadcasts", name="broadcasts_get", methods="GET")

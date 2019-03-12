@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\TimezonesModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class TimezonesController extends Controller
+class TimezonesController extends AbstractController
 {
     /**
      * @Route("/api/timezones", name="get_timezones", methods="GET")

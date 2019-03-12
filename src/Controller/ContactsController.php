@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\ContactsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ContactsController extends Controller
+class ContactsController extends AbstractController
 {
     /**
      * @Route("/api/contacts/{id}", name="contacts_delete", methods="DELETE")

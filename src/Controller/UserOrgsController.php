@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\UserOrgsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserOrgsController extends Controller
+class UserOrgsController extends AbstractController
 {
     /**
      * @Route("/api/orgs", name="orgs_get", methods="GET")

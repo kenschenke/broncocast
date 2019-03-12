@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Model\SystemOrgsModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SystemOrgsController extends Controller
+class SystemOrgsController extends AbstractController
 {
     /**
      * @Route("/api/system/orgs/{OrgId}", name="system_orgs_delete", methods="DELETE")
