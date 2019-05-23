@@ -145,6 +145,7 @@ class AuthenticationModel
             $Contact = new Contacts();
             $Contact->setUser($User);
             $Contact->setContact($email);
+            $Contact->setContactType(Contacts::TYPE_EMAIL);
             $this->em->persist($Contact);
             $this->em->flush();
 
