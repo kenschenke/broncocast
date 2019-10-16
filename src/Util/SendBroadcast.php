@@ -13,12 +13,15 @@ class SendBroadcast
     private $em;
     private $messageUtil;
     private $pushNotifications;
+    private $fcmHandler;
 
-    public function __construct(EntityManagerInterface $em, MessageUtil $messageUtil, PushNotifications $pushNotifications)
+    public function __construct(EntityManagerInterface $em, MessageUtil $messageUtil,
+                                PushNotifications $pushNotifications, FcmHandler $fcmHandler)
     {
         $this->em = $em;
         $this->messageUtil = $messageUtil;
         $this->pushNotifications = $pushNotifications;
+        $this->fcmHandler = $fcmHandler;
     }
 
     private function SendBroadcast(Broadcasts $Broadcast)
@@ -28,6 +31,7 @@ class SendBroadcast
         $PhoneRecips = [];  // array of array of phone numbers and contact IDs
         $EmailRecips = []; // array of email addresses
         $AppleRecips = [];  // array of Apple device tokens and contact IDs
+        $FcmRecips = [];  // array of Firebase Cloud Messaging tokens
 
         $ShortMsg = $Broadcast->getShortMsg();
         $LongMsg = $Broadcast->getLongMsg();
@@ -55,6 +59,7 @@ class SendBroadcast
 
             $UserPhones = [];
             $UserAppleDevices = 0;
+            $UserFcmDevices = 0;
 
             foreach ($User->getContacts() as $Contact) {
                 $ContactStr = $Contact->getContact();
@@ -79,13 +84,18 @@ class SendBroadcast
                         ];
                         $UserAppleDevices++;
                     }
+                } elseif ($ContactType === Contacts::TYPE_FCM_ANDROID || $ContactType === Contacts::TYPE_FCM_APPLE) {
+                    if ($Force === 'none' || $Force === 'short') {
+                        $FcmRecips[] = $ContactStr;
+                        $UserFcmDevices++;
+                    }
                 }
             }
 
-            // If the user has no Apple device tokens in their account,
+            // If the user has no Apple device tokens or Firebase Cloud Messaging tokens in their account,
             // send the broadcast as SMS texts.
 
-            if ($UserAppleDevices === 0) {
+            if ($UserAppleDevices === 0 && $UserFcmDevices === 0) {
                 foreach ($UserPhones as $phone) {
                     $PhoneRecips[] = $phone;
                 }
@@ -131,6 +141,21 @@ class SendBroadcast
                 $this->messageUtil->SendEmail(
                     [getenv('ADMIN_EMAIL')],
                     "SendApplePushNotifications() has failed with the following exception:\n\n" .
+                    $e->getMessage(),
+                    null, null, null
+                );
+            }
+        }
+
+        // Send the Firebase Cloud Messaging notifications
+
+        if (!empty($FcmRecips)) {
+            try {
+                $this->fcmHandler->SendMessages($FcmRecips, $TextContent);
+            } catch (\Exception $e) {
+                $this->messageUtil->SendEmail(
+                    [getenv('ADMIN_EMAIL')],
+                    "Firebase SendMessages() has failed with the following exception:\n\n" .
                     $e->getMessage(),
                     null, null, null
                 );

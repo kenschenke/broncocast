@@ -13,7 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Contacts
 {
     const TYPE_APPLE = 'APPLE';
-    const TYPE_ANDROID = 'ANDROID';
+    const TYPE_FCM_ANDROID = 'FCM_ANDROID';
+    const TYPE_FCM_APPLE = 'FCM_APPLE';
     const TYPE_EMAIL = 'EMAIL';
     const TYPE_PHONE = 'PHONE';
 
@@ -30,7 +31,7 @@ class Contacts
     private $userId;
 
     /**
-     * @ORM\Column(type="string", length=150, unique=true)
+     * @ORM\Column(type="string", length=200, unique=true)
      */
     private $contact;
 

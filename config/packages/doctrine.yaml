@@ -10,7 +10,6 @@ doctrine:
         # configure these for your database server
         driver: 'pdo_mysql'
         server_version: '5.7'
-        schema_filter: ~^(?!(auth|brc|car$|grp$|grpm|org$|orgm|usr))~
         charset: utf8mb4
         default_table_options:
             charset: utf8mb4
