@@ -87,6 +87,12 @@ class AdminUsersUi extends React.Component {
 
         return (
             <div>
+                Send single message is <span className="text-warning">{item.SingleMsg ? 'on' : 'off'}</span>.<br/>
+                { item.MobileApp.length > 0 &&
+                    <div>
+                        User has <span className="text-warning">{item.MobileApp}</span> app installed.<br/>
+                    </div>
+                }
                 <span className="text-warning">Contact Information</span><br/>
                 {contacts}
                 <div className="mt-2">

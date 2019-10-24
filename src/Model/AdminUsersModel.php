@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use App\Entity\Contacts;
 use App\Util\AdminChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -99,7 +100,7 @@ class AdminUsersModel
             $Users = [];
             $stmt = $this->em->getConnection()->executeQuery(
                 'SELECT org_members.id AS member_id, is_admin, is_approved, is_hidden, ' .
-                'user_id, alt_usr_name, fullname FROM org_members ' .
+                'user_id, alt_usr_name, fullname, single_msg FROM org_members ' .
                 'JOIN users ON org_members.user_id = users.id ' .
                 'WHERE org_id = :OrgId', ['OrgId' => $OrgId]
             );
@@ -112,6 +113,7 @@ class AdminUsersModel
                 $IsAdmin = $row['is_admin'] ? true : false;
                 $IsApproved = $row['is_approved'] ? true : false;
                 $Hidden = $row['is_hidden'] ? true : false;
+                $SingleMsg = $row['single_msg'] ? true : false;
                 if (!is_null($AltUsrName) && !empty($AltUsrName))
                     $UserName = $AltUsrName;
 
@@ -121,6 +123,8 @@ class AdminUsersModel
                     'IsAdmin' => $IsAdmin,
                     'Approved' => $IsApproved,
                     'Hidden' => $Hidden,
+                    'SingleMsg' => $SingleMsg,
+                    'MobileApp' => '',
                     'Contacts' => [],
                     'Groups' => [],
                     'SmsLogs' => [],
@@ -149,14 +153,31 @@ class AdminUsersModel
             }
 
             $stmt = $this->em->getConnection()->executeQuery(
-                'SELECT id, user_id, contact FROM contacts'
+                'SELECT id, user_id, contact, contact_type FROM contacts'
             );
             while (($row = $stmt->fetch(\PDO::FETCH_NUM))) {
                 $ContactId = $row[0];
                 $UserId = $row[1];
                 $Contact = $row[2];
+                $Type = $row[3];
+
+                $MobileApp = '';
+                if ($Type === Contacts::TYPE_APPLE || $Type === Contacts::TYPE_FCM_APPLE) {
+                    $MobileApp = 'Apple';
+                } elseif ($Type === Contacts::TYPE_FCM_ANDROID) {
+                    $MobileApp = 'Android';
+                }
 
                 if (array_key_exists($UserId, $Users)) {
+                    if (!empty($MobileApp)) {
+                        if (empty($Users[$UserId]['MobileApp'])) {
+                            $Users[$UserId]['MobileApp'] = $MobileApp;
+                        }
+
+                        // Don't show mobile device tokens in the user list
+                        continue;
+                    }
+
                     $Users[$UserId]['Contacts'][] = [
                         'ContactId' => $ContactId,
                         'Contact' => $Contact
@@ -203,6 +224,8 @@ class AdminUsersModel
                     'IsAdmin' => $User['IsAdmin'],
                     'Approved' => $User['Approved'],
                     'Hidden' => $User['Hidden'],
+                    'SingleMsg' => $User['SingleMsg'],
+                    'MobileApp' => $User['MobileApp'],
                     'Groups' => implode(', ', $User['Groups']),
                     'Contacts' => $User['Contacts'],
                     'SmsLogs' => $User['SmsLogs'],
