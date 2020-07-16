@@ -39,7 +39,7 @@
     "duxform": "^1.0.4",
     "duxpanel": "^1.0.2",
     "duxtable": "^1.0.7",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "object-assign": "^4.1.1",
     "react": "^16.6.3",
     "react-bootstrap": "^0.32.4",
