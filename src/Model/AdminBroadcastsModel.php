@@ -4,7 +4,7 @@ namespace App\Model;
 
 use App\Entity\Attachments;
 use App\Entity\Broadcasts;
-use App\Entity\Groups;
+use App\Entity\UserGrps;
 use App\Entity\GrpMembers;
 use App\Entity\Orgs;
 use App\Entity\Recipients;
@@ -165,8 +165,8 @@ class AdminBroadcastsModel
             $OrgMembersRepo = $this->em->getRepository('App:OrgMembers');
 
             $Groups = [];
-            $GroupRecs = $this->em->getRepository('App:Groups')->findBy(['orgId' => $OrgId]);
-            /** @var Groups $Group */
+            $GroupRecs = $this->em->getRepository('App:UserGrps')->findBy(['orgId' => $OrgId]);
+            /** @var UserGrps $Group */
             foreach ($GroupRecs as $Group) {
                 $Members = [];
                 $MemberRecs = $GrpMembersRepo->findBy(['grpId' => $Group->getId()]);

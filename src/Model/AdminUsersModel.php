@@ -90,7 +90,7 @@ class AdminUsersModel
             }
 
             $userRepo = $this->em->getRepository('App:Users');
-            $groupRepo = $this->em->getRepository('App:Groups');
+            $groupRepo = $this->em->getRepository('App:UserGrps');
 
             $org = $this->em->getRepository('App:Orgs')->find($OrgId);
             if (is_null($org)) {
@@ -203,7 +203,7 @@ class AdminUsersModel
 
             $stmt = $this->em->getConnection()->executeQuery(
                 'SELECT user_id, grp_name FROM grp_members ' .
-                'JOIN groups ON grp_members.grp_id = groups.id ' .
+                'JOIN user_grps ON grp_members.grp_id = user_grps.id ' .
                 'WHERE org_id = :OrgId', ['OrgId' => $OrgId]
             );
             while (($row = $stmt->fetch(\PDO::FETCH_NUM))) {

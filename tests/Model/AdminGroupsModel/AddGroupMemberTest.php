@@ -109,7 +109,7 @@ class AddGroupMemberTest extends TestCase {
             ->will($this->returnValue(null));
 
         $repoMap = [
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
         ];
 
         $em->method('getRepository')->will($this->returnValueMap($repoMap));
@@ -154,7 +154,7 @@ class AddGroupMemberTest extends TestCase {
             ->method('getCurrentRequest')
             ->will($this->returnValue($request));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -177,7 +177,7 @@ class AddGroupMemberTest extends TestCase {
             ->will($this->returnValue(null));
 
         $repoMap = [
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
             ['App:Users', $usersRepo],
         ];
 
@@ -230,7 +230,7 @@ class AddGroupMemberTest extends TestCase {
             ->method('getCurrentRequest')
             ->will($this->returnValue($request));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group->method('getOrgId')->will($this->returnValue($orgId));
@@ -258,7 +258,7 @@ class AddGroupMemberTest extends TestCase {
             ->will($this->returnValue($user));
 
         $repoMap = [
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
             ['App:Users', $usersRepo],
         ];
 
@@ -311,7 +311,7 @@ class AddGroupMemberTest extends TestCase {
             ->method('getCurrentRequest')
             ->will($this->returnValue($request));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group->method('getOrgId')->will($this->returnValue($orgId));
@@ -348,7 +348,7 @@ class AddGroupMemberTest extends TestCase {
             ->will($this->returnValue(null));
 
         $repoMap = [
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
             ['App:Users', $usersRepo],
             ['App:OrgMembers', $orgMembersRepo],
         ];

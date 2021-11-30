@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-use App\Entity\Groups;
+use App\Entity\UserGrps;
 use App\Entity\GrpMembers;
 use App\Util\AdminChecker;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +30,7 @@ class AdminGroupsModel
             }
             $UserId = (int)$request->request->get('UserId');
 
-            $Group = $this->em->getRepository('App:Groups')->find($GroupId);
+            $Group = $this->em->getRepository('App:UserGrps')->find($GroupId);
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }
@@ -76,7 +76,7 @@ class AdminGroupsModel
             }
             $Name = trim($request->request->get('Name'));
 
-            $Group = $this->em->getRepository('App:Groups')->find($GroupId);
+            $Group = $this->em->getRepository('App:UserGrps')->find($GroupId);
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }
@@ -98,7 +98,7 @@ class AdminGroupsModel
     public function GetGroupMembers($GroupId)
     {
         try {
-            $Group = $this->em->getRepository('App:Groups')->find($GroupId);
+            $Group = $this->em->getRepository('App:UserGrps')->find($GroupId);
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }
@@ -143,7 +143,7 @@ class AdminGroupsModel
     public function GetGroupNonMembers($GroupId)
     {
         try {
-            $Group = $this->em->getRepository('App:Groups')->find($GroupId);
+            $Group = $this->em->getRepository('App:UserGrps')->find($GroupId);
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }
@@ -195,7 +195,7 @@ class AdminGroupsModel
             }
 
             $Groups = [];
-            $recs = $this->em->getRepository('App:Groups')->findBy(['orgId' => $OrgId]);
+            $recs = $this->em->getRepository('App:UserGrps')->findBy(['orgId' => $OrgId]);
             foreach ($recs as $group) {
                 $Groups[] = [
                     'GroupId' => $group->getId(),
@@ -227,7 +227,7 @@ class AdminGroupsModel
             }
             $Name = trim($request->request->get('Name'));
 
-            $Group = new Groups();
+            $Group = new UserGrps();
             $Group->setOrg($Org);
             $Group->setGrpName($Name);
             $this->em->persist($Group);
@@ -242,7 +242,7 @@ class AdminGroupsModel
     public function RemoveGroup($GroupId)
     {
         try {
-            $Group = $this->em->getRepository('App:Groups')->find($GroupId);
+            $Group = $this->em->getRepository('App:UserGrps')->find($GroupId);
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }
@@ -274,7 +274,7 @@ class AdminGroupsModel
                 throw new \Exception('Group member record not found');
             }
 
-            $Group = $this->em->getRepository('App:Groups')->find($GrpMember->getGrpId());
+            $Group = $this->em->getRepository('App:UserGrps')->find($GrpMember->getGrpId());
             if (is_null($Group)) {
                 throw new \Exception('Group record not found');
             }

@@ -44,8 +44,8 @@ class GrpMembers
     private $updated;
 
     /**
-     * @var Groups
-     * @ORM\ManyToOne(targetEntity="Groups", inversedBy="members")
+     * @var UserGrps
+     * @ORM\ManyToOne(targetEntity="UserGrps", inversedBy="members")
      * @ORM\JoinColumn(name="grp_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $group;
@@ -97,7 +97,7 @@ class GrpMembers
     }
 
     /**
-     * @return Groups
+     * @return UserGrps
      */
     public function getGroup()
     {
@@ -105,10 +105,10 @@ class GrpMembers
     }
 
     /**
-     * @param Groups|null $group
+     * @param UserGrps|null $group
      * @return $this
      */
-    public function setGroup(Groups $group = null)
+    public function setGroup(UserGrps $group = null)
     {
         $this->group = $group;
 

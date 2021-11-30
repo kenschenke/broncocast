@@ -64,7 +64,7 @@ class Orgs
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Groups", mappedBy="org")
+     * @ORM\OneToMany(targetEntity="UserGrps", mappedBy="org")
      */
     private $groups;
 
@@ -213,10 +213,10 @@ class Orgs
     }
 
     /**
-     * @param Groups $group
+     * @param UserGrps $group
      * @return $this
      */
-    public function addGroup(Groups $group)
+    public function addGroup(UserGrps $group)
     {
         $this->groups[] = $group;
 
@@ -224,9 +224,9 @@ class Orgs
     }
 
     /**
-     * @param Groups $group
+     * @param UserGrps $group
      */
-    public function removeGroup(Groups $group)
+    public function removeGroup(UserGrps $group)
     {
         $this->groups->removeElement($group);
     }

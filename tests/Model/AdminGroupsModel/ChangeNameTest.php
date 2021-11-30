@@ -111,7 +111,7 @@ class ChangeNameTest extends TestCase {
         $em
             ->expects($this->once())
             ->method('getRepository')
-            ->with($this->equalTo('App:Groups'))
+            ->with($this->equalTo('App:UserGrps'))
             ->will($this->returnValue($groupsRepo));
 
         $model = new AdminGroupsModel($em, $adminChecker, $requestStack);
@@ -161,7 +161,7 @@ class ChangeNameTest extends TestCase {
             ->method('getCurrentRequest')
             ->will($this->returnValue($request));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group
@@ -185,7 +185,7 @@ class ChangeNameTest extends TestCase {
         $em
             ->expects($this->once())
             ->method('getRepository')
-            ->with($this->equalTo('App:Groups'))
+            ->with($this->equalTo('App:UserGrps'))
             ->will($this->returnValue($groupsRepo));
 
         $model = new AdminGroupsModel($em, $adminChecker, $requestStack);
@@ -235,7 +235,7 @@ class ChangeNameTest extends TestCase {
             ->method('getCurrentRequest')
             ->will($this->returnValue($request));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group
@@ -259,7 +259,7 @@ class ChangeNameTest extends TestCase {
         $em
             ->expects($this->once())
             ->method('getRepository')
-            ->with($this->equalTo('App:Groups'))
+            ->with($this->equalTo('App:UserGrps'))
             ->will($this->returnValue($groupsRepo));
         $em
             ->expects($this->once())

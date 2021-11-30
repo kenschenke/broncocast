@@ -96,7 +96,7 @@ class RemoveGroupMemberTest extends TestCase {
 
         $reposMap = [
             ['App:GrpMembers', $grpMembersRepo],
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
         ];
 
         $em->method('getRepository')->will($this->returnValueMap($reposMap));
@@ -138,7 +138,7 @@ class RemoveGroupMemberTest extends TestCase {
             ->with($this->equalTo($memberId))
             ->will($this->returnValue($grpMember));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group->method('getOrgId')->will($this->returnValue($orgId));
@@ -154,7 +154,7 @@ class RemoveGroupMemberTest extends TestCase {
 
         $reposMap = [
             ['App:GrpMembers', $grpMembersRepo],
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
         ];
 
         $em->method('getRepository')->will($this->returnValueMap($reposMap));
@@ -196,7 +196,7 @@ class RemoveGroupMemberTest extends TestCase {
             ->with($this->equalTo($memberId))
             ->will($this->returnValue($grpMember));
 
-        $group = $this->getMockBuilder('App\Entity\Groups')
+        $group = $this->getMockBuilder('App\Entity\UserGrps')
             ->disableOriginalConstructor()
             ->getMock();
         $group->method('getOrgId')->will($this->returnValue($orgId));
@@ -212,7 +212,7 @@ class RemoveGroupMemberTest extends TestCase {
 
         $reposMap = [
             ['App:GrpMembers', $grpMembersRepo],
-            ['App:Groups', $groupsRepo],
+            ['App:UserGrps', $groupsRepo],
         ];
 
         $em->method('getRepository')->will($this->returnValueMap($reposMap));

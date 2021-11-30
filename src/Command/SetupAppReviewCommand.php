@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Broadcasts;
 use App\Entity\Contacts;
-use App\Entity\Groups;
+use App\Entity\UserGrps;
 use App\Entity\GrpMembers;
 use App\Entity\OrgMembers;
 use App\Entity\Orgs;
@@ -40,13 +40,13 @@ class SetupAppReviewCommand extends Command
     /** @var string */
     private $timezone;
 
-    /** @var Groups */
+    /** @var UserGrps */
     private $students;
 
-    /** @var Groups */
+    /** @var UserGrps */
     private $parents;
 
-    /** @var Groups */
+    /** @var UserGrps */
     private $mentors;
 
     private $firstNames = [
@@ -117,7 +117,7 @@ class SetupAppReviewCommand extends Command
         $output->writeln('The app review data has been created.');
     }
 
-    private function addUserToGroup(Users $user, Groups $group)
+    private function addUserToGroup(Users $user, UserGrps $group)
     {
         $grpMember = new GrpMembers();
         $grpMember->setUser($user);
@@ -262,19 +262,19 @@ class SetupAppReviewCommand extends Command
 
     private function createGroups()
     {
-        $this->students = new Groups();
+        $this->students = new UserGrps();
         $this->students->setGrpName('Students');
         $this->students->setOrg($this->appReviewOrg);
         $this->em->persist($this->students);
         $this->em->flush();
 
-        $this->parents = new Groups();
+        $this->parents = new UserGrps();
         $this->parents->setGrpName('Parents');
         $this->parents->setOrg($this->appReviewOrg);
         $this->em->persist($this->parents);
         $this->em->flush();
 
-        $this->mentors = new Groups();
+        $this->mentors = new UserGrps();
         $this->mentors->setGrpName('Mentors');
         $this->mentors->setOrg($this->appReviewOrg);
         $this->em->persist($this->mentors);
@@ -300,7 +300,7 @@ class SetupAppReviewCommand extends Command
         }
     }
 
-    private function createUser(Groups $group, &$userIds)
+    private function createUser(UserGrps $group, &$userIds)
     {
         // Generate a random name
 

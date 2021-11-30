@@ -72,7 +72,7 @@ class GetGroupsTest extends TestCase {
         $groupRecs = [];
         for ($i = 10; $i <= 15; $i++) {
             $groupName = "Group Name $i";
-            $group = $this->getMockBuilder('App\Entity\Groups')
+            $group = $this->getMockBuilder('App\Entity\UserGrps')
                 ->disableOriginalConstructor()
                 ->getMock();
             $group->method('getId')->will($this->returnValue($i));
@@ -97,7 +97,7 @@ class GetGroupsTest extends TestCase {
         $em
             ->expects($this->once())
             ->method('getRepository')
-            ->with($this->equalTo('App:Groups'))
+            ->with($this->equalTo('App:UserGrps'))
             ->will($this->returnValue($groupsRepo));
 
         $model = new AdminGroupsModel($em, $adminChecker, $requestStack);
