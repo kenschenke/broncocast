@@ -255,7 +255,7 @@ class AdminUsersModel
 
             $this->em->getConnection()->executeQuery(
                 "DELETE FROM grp_members WHERE user_id = ? AND " .
-                "grp_id IN (SELECT id FROM groups WHERE org_id = ?)",
+                "grp_id IN (SELECT id FROM user_grps WHERE org_id = ?)",
                 [$OrgMember->getUserId(), $OrgMember->getOrgId()]);
 
             $this->em->remove($OrgMember);

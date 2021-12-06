@@ -58,10 +58,10 @@ class SystemOrgsModel
             );
             $this->em->getConnection()->executeQuery(
                 'DELETE FROM grp_members WHERE grp_id IN ' .
-                '(SELECT id FROM groups WHERE org_id = ?)', [$OrgId]
+                '(SELECT id FROM user_grps WHERE org_id = ?)', [$OrgId]
             );
             $this->em->getConnection()->executeQuery(
-                'DELETE FROM groups WHERE org_id = ?', [$OrgId]
+                'DELETE FROM user_grps WHERE org_id = ?', [$OrgId]
             );
             $this->em->getConnection()->executeQuery(
                 'DELETE FROM org_members WHERE org_id = ?', [$OrgId]
