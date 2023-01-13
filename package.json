@@ -27,7 +27,7 @@
     "jquery": "^3.3.1",
     "style-loader": "^0.21.0",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.8",
