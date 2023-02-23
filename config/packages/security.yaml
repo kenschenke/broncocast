@@ -9,7 +9,7 @@ security:
 
     encoders:
         App\Entity\Users:
-            algorithm: bcrypt
+            algorithm: auto
             cost: 12
 
     firewalls:
@@ -26,11 +26,14 @@ security:
                 path: /logout
                 target: /
                 success_handler: App\Security\LogoutSuccessHandler
-            simple_form:
-                authenticator: App\Security\BrowserAuthenticator
+            form_login:
                 login_path: /auth/login
                 check_path: /auth/login_check
-                default_target_path: /main
+#            simple_form:
+#                authenticator: App\Security\BrowserAuthenticator
+#                login_path: /auth/login
+#                check_path: /auth/login_check
+#                default_target_path: /main
             guard:
                 authenticators:
                     - App\Security\AppAuthenticator
